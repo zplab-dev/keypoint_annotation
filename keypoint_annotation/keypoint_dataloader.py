@@ -138,7 +138,7 @@ class WormKeypointDataset(data.Dataset):
         reflect = False
         if 'keypoints' in annotations and 'vulva' in annotations['keypoints']:
             x, y = annotations['keypoints']['vulva']
-            #reflect = y > 0
+            reflect = y > 0
         image_width, image_height = image_shape
         worm_frame = worm_spline.to_worm_frame(bf, new_center_tck, new_width_tck,
             standard_width=avg_widths, zoom=1, order=1, sample_distance=image_height//2, standard_length=image_width, reflect_centerline=reflect)
