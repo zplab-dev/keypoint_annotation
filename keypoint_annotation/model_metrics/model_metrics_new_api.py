@@ -13,7 +13,7 @@ from elegant import process_images
 from elegant import worm_spline
 from elegant import datamodel
 
-import keypoint_annotation_model
+from keypoint_annotation import keypoint_annotation_model
 
 def to_tck(widths):
     x = numpy.linspace(0, 1, len(widths))

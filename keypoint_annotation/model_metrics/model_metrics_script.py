@@ -10,12 +10,10 @@ from elegant import datamodel
 import torch
 from datetime import datetime
 
-import model_metrics_new_api
-import avg_keypoints
-
 from elegant.torch import dataset
-import worm_datasets
 
+from keypoint_annotation.production import worm_datasets
+from keypoint_annotation.model_metrics import model_metrics_new_api
 
 save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/'
 
@@ -82,7 +80,7 @@ for key, acc in dist.items():
 
 fn.write("Min/max for each keypoint")
 for key, acc in dist.items():
-    fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
+    fn.write('{}: {}, {}\n\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
 
 worst_dist = model_metrics_new_api.get_accuracy_tplist(test, pred_id='worst case keypoints')
 fn.write('Worst Case Metrics: \n')
