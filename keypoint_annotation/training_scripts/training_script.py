@@ -86,7 +86,7 @@ print(dataset_sizes)
 
 project_name = 'new_api_960x96_cov100'
 #save_dir = './'+project_name
-save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_test/'+project_name
+save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/'+project_name
 if not os.path.exists(save_dir): os.makedirs(save_dir)
 log_filename = os.path.join(save_dir, 'train.log')
 
