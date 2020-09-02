@@ -50,7 +50,7 @@ downscale = 1
 image_shape = (960,96)
 pred_id = 'pred keypoints 960x96_cov100'
 
-model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/new_api_960x96_cov100/'
+model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_api_960x96_cov100/'
 model_paths={'ant_pharynx':model_path_root+"ant_pharynx/bestValModel.paramOnly", 
              'post_pharynx':model_path_root+'post_pharynx/bestValModel.paramOnly', 
              'vulva_class':model_path_root+'Vulva_Classifier/bestValModel.paramOnly',
@@ -66,9 +66,10 @@ for k, p in model_paths.items():
     fn.write('\t{}: {}\n'.format(k,p))
 fn.close()
 
-model_metrics_new_api.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
+#model_metrics_new_api.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
 
 for timepoint in timepoint_list:
+        model_metrics_new_api.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape)
         model_metrics_new_api.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape)
 
 #output data:
@@ -78,16 +79,16 @@ dist = model_metrics_new_api.get_accuracy_tplist(test, pred_id=pred_id)
 for key, acc in dist.items():
     fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
 
-fn.write("Min/max for each keypoint")
+fn.write("\nMin/max for each keypoint\n")
 for key, acc in dist.items():
-    fn.write('{}: {}, {}\n\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
+    fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
 
 worst_dist = model_metrics_new_api.get_accuracy_tplist(test, pred_id='worst case keypoints')
-fn.write('Worst Case Metrics: \n')
+fn.write('\nWorst Case Metrics: \n')
 for key, acc in worst_dist.items():
     fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
 
-fn.write("Min/max for each keypoint")
+fn.write("\nMin/max for each keypoint")
 for key, acc in worst_dist.items():
     fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
 

@@ -276,19 +276,13 @@ def predict_worst_case_image(image, keypoints, downscale=2, model_paths= {'ant_p
     
     keypoint_dict = {}
     tensor_img = torch.tensor(image).unsqueeze(0)
+    vulva_out = 1
     if keypoints['vulva'][1] < 0:
         tensor_img = torch.flip(tensor_img, [3])
-    #identify dorsal, ventral first
-    regModel = keypoint_annotation_model.init_vuvla_class_model()
-    regModel.load_state_dict(torch.load(model_paths['vulva_class'], map_location='cpu'))
-    regModel.eval()
-    
-    out= regModel(tensor_img)
-    _, vulva_out = torch.max(out, 1)
-    vulva_out = vulva_out.item()
+        vulva_out = 0
     
     #print(tensor_img.size())
-    print("true vulva: ", keypoints['vulva'][1], "    vulva out: ", out, vulva_out)
+    print("true vulva: ", keypoints['vulva'][1], "    vulva out: ", vulva_out)
 
     for kp, model_kp in zip(['anterior bulb', 'posterior bulb', 'vulva', 'tail'], ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']):
         #load model

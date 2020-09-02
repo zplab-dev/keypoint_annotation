@@ -133,8 +133,8 @@ class WormKeypointDataset:
             temp = 25
         magnification = objective * optocoupler
         return objective, optocoupler, magnification, temp
-    
-   def preprocess_image(self, timepoint):
+
+    def preprocess_image(self, timepoint):
         downscale = self.downscale
         lab_frame_image = freeimage.read(timepoint.image_path('bf'))
         lab_frame_image = lab_frame_image.astype(numpy.float32)
@@ -263,7 +263,7 @@ class WormKeypointDataset:
 
         return(scale_keypoint0_maps, scale_keypoint1_maps, scale_keypoint2_maps, scale_keypoint3_maps)
 
-class VulvaClassifier(data.Dataset):
+class VulvaClassifier:
     def __init__(self, downscale=2, image_size=(960,512)):
         super().__init__()
         self.downscale = downscale
@@ -273,9 +273,6 @@ class VulvaClassifier(data.Dataset):
         AVG_WIDTHS_TCK = self.to_tck(self.AVG_WIDTHS)
         self.AVG_WIDTHS_TCK = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
         self.image_size = image_size
-    
-    def __len__(self):
-        return len(self.timepoint_list)
     
     def __call__(self, timepoint):
         worm_frame_image = self.worm_frame_image(timepoint)
@@ -302,12 +299,12 @@ class VulvaClassifier(data.Dataset):
     
     def preprocess_image(self, timepoint):
         downscale = self.downscale
-        lab_frame_image = freeimage.read(self.timepoint.image_path('bf'))
+        lab_frame_image = freeimage.read(timepoint.image_path('bf'))
         lab_frame_image = lab_frame_image.astype(numpy.float32)
         height, width = lab_frame_image.shape[:2]
 
         try:
-            metadata = self.timepoint.position.experiment.metadata
+            metadata = timepoint.position.experiment.metadata
             optocoupler = metadata['optocoupler']
         except KeyError:
             optocoupler = 1
@@ -331,7 +328,7 @@ class VulvaClassifier(data.Dataset):
         return bf
 
     def get_vulva_class(self, timepoint):
-        annotations = self.timepoint.annotations
+        annotations = timepoint.annotations
         if 'keypoints' in annotations and 'vulva' in annotations['keypoints']:
             x, y = annotations['keypoints']['vulva']
             vulva_class = 0
@@ -343,7 +340,7 @@ class VulvaClassifier(data.Dataset):
     def worm_frame_image(self, timepoint):
         downscale = self.downscale
         bf = self.preprocess_image(timepoint)
-        annotations = self.timepoint.annotations
+        annotations = timepoint.annotations
         center_tck, width_tck = annotations['pose']
         image_size = self.image_size
 
@@ -404,7 +401,7 @@ class WormKeypointDatasetNoFlip:
         magnification = objective * optocoupler
         return objective, optocoupler, magnification, temp
     
-   def preprocess_image(self, timepoint):
+    def preprocess_image(self, timepoint):
         downscale = self.downscale
         lab_frame_image = freeimage.read(timepoint.image_path('bf'))
         lab_frame_image = lab_frame_image.astype(numpy.float32)
