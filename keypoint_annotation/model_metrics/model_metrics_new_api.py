@@ -95,17 +95,16 @@ def get_worm_frame_image(timepoint, downscale=1, image_size=(960, 512)):
 def process_reg_output(out, downscale=2):
     #Way to get the keypoint maps and make it into the xy positions
     out_kp_map = out[('Keypoint0',0)][0].cpu().detach().numpy()
-    out_kp_map = out_kp_map[0]
+    out_kp_map = out_kp_map[0].copy()
     image_shape = out_kp_map.shape
     widths_tck = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
     mask = worm_spline.worm_frame_mask(widths_tck, image_shape) #make worm mask
     mask = mask>0
-    out_kp_map[~mask] = 0 #since we don't care about things outside of the worm pixels, set everything outside to -1
-    #out_kp = numpy.where(out_kp_map == numpy.max(out_kp_map[mask]))
-    out_kp = numpy.unravel_index(numpy.argmax(out_kp_map), out_kp_map.shape)
-
-    return out_kp
-    #return (out_kp[0][0], out_kp[1][0]) #put it into the tuple form
+    x, y = numpy.indices(out_kp_map.shape)
+    pred_x = (x * out_kp_map).sum() / out_kp_map.sum()
+    pred_y = (y * out_kp_map).sum() / out_kp_map.sum() 
+    
+    return (pred_x, pred_y)
 
 def renormalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_size=(960,512)):
     downscale = downscale
@@ -276,10 +275,10 @@ def predict_worst_case_image(image, keypoints, downscale=2, model_paths= {'ant_p
     
     keypoint_dict = {}
     tensor_img = torch.tensor(image).unsqueeze(0)
-    vulva_out = 1
+    vulva_out = 0
     if keypoints['vulva'][1] < 0:
         tensor_img = torch.flip(tensor_img, [3])
-        vulva_out = 0
+        vulva_out = 1
     
     #print(tensor_img.size())
     print("true vulva: ", keypoints['vulva'][1], "    vulva out: ", vulva_out)
@@ -339,7 +338,7 @@ def production_predict_image(image, keypoints, downscale=2, model_paths= {'ant_p
 
     return keypoint_dict
 
-def output_prediction_images(image, keypoints, model_paths={'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
+def output_prediction_image(image, keypoints, model_paths={'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
         'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}):
     keypoint_maps = []
     tensor_img = torch.tensor(image).unsqueeze(0)

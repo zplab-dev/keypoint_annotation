@@ -88,7 +88,7 @@ fn.write('\nWorst Case Metrics: \n')
 for key, acc in worst_dist.items():
     fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
 
-fn.write("\nMin/max for each keypoint")
+fn.write("\nMin/max for each keypoint: \n")
 for key, acc in worst_dist.items():
     fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
 
