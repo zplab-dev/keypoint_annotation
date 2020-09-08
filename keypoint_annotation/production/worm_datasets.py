@@ -39,7 +39,7 @@ class GenerateWormImage:
         reflect = False
         if 'keypoints' in annotations and 'vulva' in annotations['keypoints']:
             x, y = annotations['keypoints']['vulva']
-            reflect = y < 0
+            reflect = y > 0
         image_width, image_height = image_size
         worm_frame = worm_spline.to_worm_frame(bf, new_center_tck, new_width_tck,
             standard_width=avg_widths, zoom=1, order=1, sample_distance=image_height//2, standard_length=image_width, reflect_centerline=reflect)
@@ -215,7 +215,7 @@ class WormKeypointDataset:
         return new_xs, ys
 
 
-    def generate_keypoint_maps(self, timepoint, worm_frame_shape, covariate=100):
+    def generate_keypoint_maps(self, timepoint, worm_frame_shape, covariate=50):
         downscale = self.downscale
         
         #step 1: get the x,y positions in the new image shape
