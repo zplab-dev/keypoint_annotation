@@ -17,14 +17,18 @@ from zplib.image import colorize
 from zplib.curve import spline_geometry
 import freeimage
 import numpy
+import torch
+
 from elegant import process_images
 from elegant import worm_spline
 from elegant import datamodel
-import torch
+from elegant.torch import dataset
+
 
 from keypoint_annotation import keypoint_dataloader
 from keypoint_annotation import keypoint_annotation_model
 from keypoint_annotation import keypoint_training
+from keypoint_annotation.production import worm_datasets
 
 ### Load in Data
 def has_pose(timepoint):
@@ -66,9 +70,11 @@ image_shape = (960,96)
 device ='cpu'
 if torch.cuda.is_available(): device='cuda:0'
 
-datasets = {'train': keypoint_dataloader.WormKeypointDataset(train, downscale=downscale, scale=scale, image_size=image_shape),
-           'val': keypoint_dataloader.WormKeypointDataset(val, downscale=downscale, scale=scale, image_size=image_shape),
-           'test': keypoint_dataloader.WormKeypointDataset(test, downscale=downscale, scale=scale, image_size=image_shape)}
+data_generator = worm_datasets.WormKeypointDataset(downscale=downscale, scale=scale, image_size=image_shape)
+
+datasets = {'train': dataset.WormDataset(train, data_generator),
+           'val': dataset.WormDataset(val, data_generator),
+           'test': dataset.WormDataset(test, data_generator)}
 
 dataloaders = {set_name: DataLoader(datasets[set_name], 
                                     batch_size=batch_size,
@@ -80,7 +86,7 @@ print(dataset_sizes)
 
 project_name = 'new_api_960x96_cov100'
 #save_dir = './'+project_name
-save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/'+project_name
+save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/'+project_name
 if not os.path.exists(save_dir): os.makedirs(save_dir)
 log_filename = os.path.join(save_dir, 'train.log')
 
