@@ -41,7 +41,7 @@ I have written up a script that will open a riswidget annotator window with the 
 2.  Run the script with your initials in the argument slot (my nitials are NML, so replace that bit with your initials):
     
     ```python annotate_experiment_script.py NML```
-3.  
+3.  A RisWidget window with a keypoint annotator and pose annotator should come up. Note that it might take a little while for all the images to load over the network, so go get a snack while you wait!
 4.  Annotate the worms!
 ### Annotating the worms:
 1.  The keypoints you will be annotating are (see Examples for visual references):
@@ -59,6 +59,7 @@ I have written up a script that will open a riswidget annotator window with the 
 4. You can hit 'Save' or otherwise just exit out of the RisWidget window to save your annotations. 
     
 #### Examples:
-
+1.  Annotator example:
+2.  Annotated worm examples: Colored points correspond with the keypoints
 
 Any questions/comments can be addressed to me!
