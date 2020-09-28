@@ -61,7 +61,7 @@ I have written up a script that will open a riswidget annotator window with the 
 #### Examples:
 1.  Annotator example:
 
-![Annotator Example](https://github.com/zplab-dev/keypoint_annotation/blob/reproducibility/keypoint_annotation/reproducibility/Examples/annotator_ex.png)
+![Annotator Example](https://github.com/zplab-dev/keypoint_annotation/blob/master/keypoint_annotation/reproducibility/Examples/annotator_ex.png)
 
 2.  Annotated worm examples: Colored points correspond with the keypoints
 
