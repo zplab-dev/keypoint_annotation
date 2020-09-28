@@ -45,10 +45,10 @@ I have written up a script that will open a riswidget annotator window with the 
 4.  Annotate the worms!
 ### Annotating the worms:
 1.  The keypoints you will be annotating are (see Examples for visual references):
-    * Anterior pharyngeal bulb: end of the anterior pharyngeal bulb 
-    * Posterior pharyngeal bulb: end of the posterior pharyngeal bulb
+    * Anterior pharyngeal bulb: posterior end of the anterior pharyngeal bulb 
+    * Posterior pharyngeal bulb: posterior end of the posterior pharyngeal bulb
     * Vulva: middle of the vulva 
-    * Tail: end of visible tissue/texture in the posterior end of the worm
+    * Tail: end of visible tissue/texture (where the worm tissue goes from more textured to clear) in the posterior end of the worm
 2.  Click the 'Lock' check box in the annotator
 3.  Click the locations of each keypoint in the **straightened worm image**
     * Keypoint clicks will be placed in the order "Anterior bulb", "Posterior bulb", "vulva", "tail" and will be color coordinated
