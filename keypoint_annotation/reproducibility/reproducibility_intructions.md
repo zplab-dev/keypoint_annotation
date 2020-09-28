@@ -19,9 +19,8 @@ I have written up a script that will open a riswidget annotator window with the 
 1.	Ensure you have the zpl environments set up. If you are just starting out refer to [this Github post](https://github.com/zplab/protocols/blob/master/computer%20protocols/zplab%20Python%20Environment.md) on how to set up your environment.
     * If you have not recently updated elegant or ris_widget, please update it using (change elegant for specific packages): 
     
-    ```pip install -U git+https://github.com/zplab/elegant```
-2.	Connect to the VPN
-* see [this link](https://it.wustl.edu/items/connect/) for info on how to connect to the wustl VPN
+       ```pip install -U git+https://github.com/zplab/elegant```
+2.	Connect to the VPN: see [this link](https://it.wustl.edu/items/connect/) for info on how to connect to the wustl VPN
 3.  Connect to Lugia
     ##### For Mac:
     * Open Finder and click "Go" in the toolbar
@@ -39,13 +38,28 @@ I have written up a script that will open a riswidget annotator window with the 
     
 ### Running the script:
 1.  Open a terminal window and navigate to where you saved the annotation script
-2.  Run the script with your initials in the argument slot:
+2.  Run the script with your initials in the argument slot (my nitials are NML, so replace that bit with your initials):
     
     ```python annotate_experiment_script.py NML```
-3.  Annotate the worms!
+3.  A RisWidget window with a keypoint annotator and pose annotator should come up. Note that it might take a little while for all the images to load over the network, so go get a snack while you wait!
+4.  Annotate the worms!
 ### Annotating the worms:
-1.  
+1.  The keypoints you will be annotating are (see Examples for visual references):
+    * Anterior pharyngeal bulb: end of the anterior pharyngeal bulb 
+    * Posterior pharyngeal bulb: end of the posterior pharyngeal bulb
+    * Vulva: middle of the vulva 
+    * Tail: end of visible tissue/texture in the posterior end of the worm
+2.  Click the 'Lock' check box in the annotator
+3.  Click the locations of each keypoint in the straightened worm image 
+    * Keypoint clicks will be placed in the order "Anterior bulb", "Posterior bulb", "vulva", "tail" and will be color coordinated
+    * You will be able to see which keypoints have been added in the bottom of the annotator (colored keypoint names indicate the keypoint has been placed)
+
+> The straightened worm image should be situated with the head to the left and the tail to the right. If this is **not** the case, click the 'reverse' button to reverse the direction the worm is facing in
+
+4. You can hit 'Save' or otherwise just exit out of the RisWidget window to save your annotations. 
+    
 #### Examples:
+1.  Annotator example:
+2.  Annotated worm examples: Colored points correspond with the keypoints
 
-## Troubleshooting problems:
-
+Any questions/comments can be addressed to me!
