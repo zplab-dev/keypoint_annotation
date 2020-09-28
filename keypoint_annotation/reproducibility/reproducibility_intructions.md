@@ -50,7 +50,7 @@ I have written up a script that will open a riswidget annotator window with the 
     * Vulva: middle of the vulva 
     * Tail: end of visible tissue/texture in the posterior end of the worm
 2.  Click the 'Lock' check box in the annotator
-3.  Click the locations of each keypoint in the straightened worm image 
+3.  Click the locations of each keypoint in the **straightened worm image**
     * Keypoint clicks will be placed in the order "Anterior bulb", "Posterior bulb", "vulva", "tail" and will be color coordinated
     * You will be able to see which keypoints have been added in the bottom of the annotator (colored keypoint names indicate the keypoint has been placed)
 
