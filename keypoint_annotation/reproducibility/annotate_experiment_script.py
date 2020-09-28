@@ -14,11 +14,14 @@ from elegant.gui import experiment_annotator
 def set_up_annotations(initials, os):
     initials = initials
     timepoint_path, new_root = None, None
-    print(os)
     if os == 'Darwin':
         timepoint_path = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/sampled_timepoints_os.txt'
         new_root = pathlib.Path('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/')
     elif os == 'Linux':
+        timepoint_path = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/sampled_timepoints_linux.txt'
+        new_root = pathlib.Path('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/')
+    elif os == 'Windows':
+        #assume they are running things from mobaxterm (not the best idea, but it's what I have)
         timepoint_path = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/sampled_timepoints_linux.txt'
         new_root = pathlib.Path('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/')
 
