@@ -9,6 +9,9 @@ import freeimage
 import numpy
 import pickle
 import torch
+
+from scipy.ndimage import gaussian_filter
+
 from elegant import process_images
 from elegant import worm_spline
 from elegant import datamodel
@@ -98,16 +101,22 @@ def process_reg_output(out, downscale=2):
     out_kp_map = out_kp_map[0].copy()
     image_shape = out_kp_map.shape
     widths_tck = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
-    mask = worm_spline.worm_frame_mask(widths_tck, image_shape) #make worm mask
-    mask = mask>0
+    #mask = worm_spline.worm_frame_mask(widths_tck, image_shape) #make worm mask
+    #mask = mask>0
+    #try a gaussian filter to make output a bit smoother
+    out_kp_map = gaussian_filter(out_kp_map, 1)
+    #To ensure there are no negative values, make the pixels that are less than half the maximum zero
+    max_pixel = out_kp_map.max()
+    out_kp_map[out_kp_map<(max_pixel/2)] = 0
     x, y = numpy.indices(out_kp_map.shape)
     pred_x = (x * out_kp_map).sum() / out_kp_map.sum()
     pred_y = (y * out_kp_map).sum() / out_kp_map.sum() 
-    
+    print("pred_x, pred_y: ", pred_x, pred_y)
     return (pred_x, pred_y)
 
 def renormalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_size=(960,512)):
     downscale = downscale
+    print('timepoint: ', timepoint.position.experiment.name, timepoint.position.name, timepoint.name)
     center_tck, width_tck = timepoint.annotations['pose']
     image_shape = (image_size[0]/downscale, image_size[1]/downscale)
     length = spline_geometry.arc_length(center_tck)
@@ -116,16 +125,17 @@ def renormalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_siz
     new_keypoints = {}
     for kp, points in pred_keypoints.items():
         x,y = points
+
         x_percent = x/image_shape[0]
         new_x = x_percent*length
         if kp is 'vulva':
             vulvax = int(new_x)
+            print("pred_keypoints: ", x, y)
             print("vulvax: ", vulvax)
-            
             print("x_percent: ", x_percent)
             avg_widths = interpolate.spline_interpolate(width_tck, length)
-            if vulvax == len(avg_widths):
-                vulvax = vulvax-1
+            if vulvax >= len(avg_widths):
+                vulvax = len(avg_widths)-1
             vulvay = avg_widths[vulvax]
             if y <0:
                 new_y = -vulvay

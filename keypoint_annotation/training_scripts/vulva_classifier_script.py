@@ -61,8 +61,8 @@ scale = [0,1,2,3]      # the number of output layer for U-net
 batch_size = 5
 total_epoch_num = 25 # total number of epoch in training
 base_lr = 0.0005      # base learning rate/
-downscale = 1
-image_shape = (960,96)
+downscale = 2
+image_shape = (960,128)
 
 # cpu or cuda
 device ='cpu'
@@ -84,7 +84,7 @@ print(dataset_sizes)
 
 project_name = 'Vulva_Classifier'
 #save_dir = './'+project_name
-save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_api_960x96_cov100/'+project_name
+save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_api_480x64/'+project_name
 print("Save Dir: ", save_dir)
 if not os.path.exists(save_dir): os.makedirs(save_dir)
 log_filename = os.path.join(save_dir, 'train.log')

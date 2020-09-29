@@ -31,7 +31,6 @@ def has_pose(timepoint):
     # make sure pose is not None, and center/width tcks are both not None
     return pose is not None and pose[0] is not None and pose[1] is not None
     
-
 def has_keypoints(timepoint):
     keypoints = timepoint.annotations.get('keypoints', None)
     return keypoints is not None and not None in keypoints.values() and not False in [x in keypoints.keys() for x in ['anterior bulb', 'posterior bulb', 'vulva', 'tail']]
@@ -46,11 +45,11 @@ train, val, test = datamodel.Timepoints.split_experiments(*experiments, fraction
 device ='cpu'
 if torch.cuda.is_available(): device='cuda:0'
 
-downscale = 1
-image_shape = (960,96)
+downscale = 2
+image_shape = (960,128)
 pred_id = 'pred keypoints 960x96_cov100'
 
-model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_api_960x96_cov100/'
+model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_api_480x64/'
 model_paths={'ant_pharynx':model_path_root+"ant_pharynx/bestValModel.paramOnly", 
              'post_pharynx':model_path_root+'post_pharynx/bestValModel.paramOnly', 
              'vulva_class':model_path_root+'Vulva_Classifier/bestValModel.paramOnly',
@@ -68,7 +67,7 @@ fn.close()
 
 #model_metrics_new_api.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
 
-for timepoint in timepoint_list:
+for timepoint in test:
         model_metrics_new_api.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape)
         model_metrics_new_api.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape)
 
