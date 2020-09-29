@@ -50,7 +50,7 @@ def set_up_annotations(initials, os):
     rw = ris_widget.RisWidget()
     pa = pose_annotation.PoseAnnotation(rw)
     keypoint_name = 'keypoints '+initials
-    ka = keypoint_annotation.KeypointAnnotation(rw, ['anterior bulb', 'posterior bulb', 'vulva', 'tail'], name='keypoints', auto_advance=True)
+    ka = keypoint_annotation.KeypointAnnotation(rw, ['anterior bulb', 'posterior bulb', 'vulva', 'tail'], name= keypoint_name, auto_advance=True)
     ea = experiment_annotator.ExperimentAnnotator(rw, [position], [pa, ka])
     rw.run()
 
