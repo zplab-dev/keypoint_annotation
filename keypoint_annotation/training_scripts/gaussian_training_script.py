@@ -44,7 +44,7 @@ device ='cpu'
 if torch.cuda.is_available(): device='cuda:0'
 
 kp_map_generator = training_dataloaders.GaussianKpMap(covariate=covariate, max_val=max_val)
-data_generator = training_dataloaders.WormKeypointDataset(kp_map_generator,downscale=downscale, scale=scale, image_size=image_size)
+data_generator = training_dataloaders.WormKeypointDataset(kp_map_generator,downscale=downscale, scale=scale, image_size=image_shape)
 
 datasets = {'train': dataset.WormDataset(train, data_generator),
            'val': dataset.WormDataset(val, data_generator),
