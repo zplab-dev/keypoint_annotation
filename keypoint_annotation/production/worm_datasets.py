@@ -216,8 +216,6 @@ class WormKeypointDataset:
 
 
     def generate_keypoint_maps(self, timepoint, worm_frame_shape, covariate=100):
-        downscale = self.downscale
-        
         #step 1: get the x,y positions in the new image shape
         new_xs, ys = self.get_keypoint_coords(timepoint, worm_frame_shape)
 
