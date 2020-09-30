@@ -4,6 +4,8 @@ import platform
 import torch
 import numpy
 
+from torch.utils.data import Dataset, DataLoader
+
 from elegant import process_images
 from elegant import worm_spline
 from elegant import datamodel
