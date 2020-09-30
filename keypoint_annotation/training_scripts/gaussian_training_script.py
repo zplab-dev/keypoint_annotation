@@ -61,7 +61,7 @@ dataloaders = {set_name: DataLoader(datasets[set_name],
 dataset_sizes = {set_name: len(datasets[set_name]) for set_name in sets}
 print(dataset_sizes)
 
-project_name = '960x96_cov100_max100'
+project_name = '960x96_cov{}_max{}'.format(covariate, max_val)
 #save_dir = './'+project_name
 save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/'+project_name
 if not os.path.exists(save_dir): os.makedirs(save_dir)
