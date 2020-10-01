@@ -44,7 +44,7 @@ def set_up_annotations(initials, os):
         def __iter__(self):
             return iter(self.timepoints)
 
-    position = VirtualPosition('reproducibility',sample_timepoints[:20])
+    position = VirtualPosition('reproducibility',sample_timepoints)
 
 
     rw = ris_widget.RisWidget()

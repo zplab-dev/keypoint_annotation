@@ -69,8 +69,8 @@ scale = [0,1,2,3]      # the number of output layer for U-net
 batch_size = 5
 total_epoch_num = 25 # total number of epoch in training
 base_lr = 0.0005      # base learning rate/
-downscale = 1
-image_shape = (960,96)
+downscale = 2
+image_shape = (960,128)
 
 # cpu or cuda
 device ='cpu'
@@ -90,7 +90,7 @@ dataloaders = {set_name: DataLoader(datasets[set_name],
 dataset_sizes = {set_name: len(datasets[set_name]) for set_name in sets}
 print(dataset_sizes)
 
-project_name = 'new_api_960x96_cov100'
+project_name = 'new_api_480x64'
 #save_dir = './'+project_name
 save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/'+project_name
 if not os.path.exists(save_dir): os.makedirs(save_dir)
