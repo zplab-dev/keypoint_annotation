@@ -28,10 +28,11 @@ from elegant.torch import dataset
 from keypoint_annotation import keypoint_dataloader
 from keypoint_annotation import keypoint_annotation_model
 from keypoint_annotation import keypoint_training
+from keypoint_annotation.dataloaders import training_dataloaders
 from keypoint_annotation.production import worm_datasets
 
 ### Load in Data
-def has_pose(timepoint):
+"""def has_pose(timepoint):
     pose = timepoint.annotations.get('pose', None)
     # make sure pose is not None, and center/width tcks are both not None
     return pose is not None and pose[0] is not None and pose[1] is not None
@@ -55,6 +56,11 @@ for experiment in experiments:
     experiment.filter(timepoint_filter=(has_pose, has_keypoints))
 
 train, val, test = datamodel.Timepoints.split_experiments(*experiments, fractions=[0.7, 0.2, 0.1])
+print(len(train), len(val), len(test))"""
+
+train = datamodel.Timepoints.from_file('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/train_path_os.txt')
+val = datamodel.Timepoints.from_file('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/val_path_os.txt')
+test = datamodel.Timepoints.from_file('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_os.txt')
 print(len(train), len(val), len(test))
 
 #model parameters

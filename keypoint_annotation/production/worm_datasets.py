@@ -213,11 +213,8 @@ class WormKeypointDataset:
         ys[2] = (image_shape[1]/2) - vulvay
 
         return new_xs, ys
-
-
-    def generate_keypoint_maps(self, timepoint, worm_frame_shape, covariate=50):
-        downscale = self.downscale
-        
+      
+    def generate_keypoint_maps(self, timepoint, worm_frame_shape, covariate=100):
         #step 1: get the x,y positions in the new image shape
         new_xs, ys = self.get_keypoint_coords(timepoint, worm_frame_shape)
 

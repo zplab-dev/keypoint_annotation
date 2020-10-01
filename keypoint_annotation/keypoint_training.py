@@ -9,12 +9,14 @@ from torch.optim import lr_scheduler
 import torchvision
 from torchvision import datasets, models, transforms
 import pickle
+import pathlib
 from datetime import datetime
 import matplotlib.pyplot as plt
 
 from zplib.curve import interpolate
 from zplib.image import pyramid
 import keypoint_annotation_model
+import elegant
 from elegant import worm_spline
 #since all the worms will be in the same orientation/worm pixels, hardcode in a worm_frame_mask
 def to_tck(widths):
@@ -22,9 +24,20 @@ def to_tck(widths):
     smoothing = 0.0625 * len(widths)
     return interpolate.fit_nonparametric_spline(x, widths, smoothing=smoothing)
 
-WIDTH_TRENDS = pickle.load(open('/home/nicolette/.conda/envs/nicolette/lib/python3.7/site-packages/elegant/width_data/width_trends.pickle', 'rb'))
+def get_avg_widths():
+    elegant_path = pathlib.Path(elegant.__file__)
+    width_trends_path = elegant_path.parent /'width_data/width_trends.pickle'
+    WIDTH_TRENDS = pickle.load(open(width_trends_path,'rb'))
+    AVG_WIDTHS = numpy.array([numpy.interp(5, WIDTH_TRENDS['ages'], wt) for wt in WIDTH_TRENDS['width_trends']])
+    AVG_WIDTHS_TCK = to_tck(AVG_WIDTHS)
+    return AVG_WIDTHS_TCK
+
+"""WIDTH_TRENDS = pickle.load(open('/home/nicolette/.conda/envs/nicolette/lib/python3.7/site-packages/elegant/width_data/width_trends.pickle', 'rb'))
 AVG_WIDTHS = numpy.array([numpy.interp(5, WIDTH_TRENDS['ages'], wt) for wt in WIDTH_TRENDS['width_trends']])
-AVG_WIDTHS_TCK = to_tck(AVG_WIDTHS)
+AVG_WIDTHS_TCK = to_tck(AVG_WIDTHS)"""
+
+AVG_WIDTHS_TCK = get_avg_widths()
+
 
 class LossofRegmentation(nn.Module):
     def __init__(self, downscale=2, scale=(0,1,2,3), image_shape=(960,512)):
