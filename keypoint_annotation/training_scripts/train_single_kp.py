@@ -74,7 +74,7 @@ initModel = keypoint_annotation_model.WormRegModel(34, scale, pretrained=True)
 initModel.to(device)
 
 #loss function
-loss = keypoint_training.LossofRegmentation(downscale=downscale, scale=scale, image_shape=image_shape)
+loss = keypoint_training.LossofRegmentation(downscale=downscale, scale=scale, image_shape=image_shape, mask_error=False)
 
 optimizer = torch.optim.Adam([{'params': initModel.parameters()}], lr=base_lr)
 
