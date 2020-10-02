@@ -1,31 +1,20 @@
 from __future__ import absolute_import, division, print_function
-import numpy as np
-import torchvision
-from torchvision import datasets, models, transforms
 import os
-import shutil
+import platform
 import torch
-import torch.nn as nn
-from collections import OrderedDict
-import torchvision.models as models
-import torch.utils.model_zoo as model_zoo
-from torch.utils.data import Dataset, DataLoader
-import matplotlib.pyplot as plt
-
-from torch.utils import data
-from zplib.image import colorize
-from zplib.curve import spline_geometry
-import freeimage
 import numpy
-import time
+
+from torch.utils.data import Dataset, DataLoader
+
 from elegant import process_images
 from elegant import worm_spline
 from elegant import datamodel
-import torch
+from elegant.torch import dataset
 
-from keypoint_annotation import keypoint_dataloader
 from keypoint_annotation import keypoint_annotation_model
 from keypoint_annotation import keypoint_training
+from keypoint_annotation.dataloaders import training_dataloaders
+from keypoint_annotation.production import worm_datasets
 
 ##Load in Data
 os_type = platform.system()
