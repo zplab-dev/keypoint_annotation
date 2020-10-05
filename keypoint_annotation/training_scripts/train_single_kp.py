@@ -36,11 +36,11 @@ elif os_type == 'Linux':
 sets = ['train', 'val']
 scale = [0,1,2,3]      # the number of output layer for U-net
 batch_size = 5
-total_epoch_num = 50 # total number of epoch in training
+total_epoch_num = 25 # total number of epoch in training
 base_lr = 0.0005      # base learning rate/
 downscale = 1
 image_shape = (960,96)
-covariate = 100
+covariate = 50
 max_val = 100
 
 # cpu or cuda

@@ -39,7 +39,7 @@ total_epoch_num = 25 # total number of epoch in training
 base_lr = 0.0005      # base learning rate/
 downscale = 1
 image_shape = (960,96)
-covariate = 100
+covariate = 50
 max_val = 100
 
 # cpu or cuda
