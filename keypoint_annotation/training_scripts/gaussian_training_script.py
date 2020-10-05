@@ -114,4 +114,4 @@ if __name__ == "__main__":
         print("Please include covariate and max_val")
         sys.exit(1)
 
-    train_model(covariate, max_val)
+    train_model(float(covariate), float(max_val))
