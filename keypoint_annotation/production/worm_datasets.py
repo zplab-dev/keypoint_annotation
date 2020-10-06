@@ -1,12 +1,15 @@
+import pkg_resources
+from scipy import stats
+import freeimage
+import pickle
+import numpy 
+
 from torch.utils import data
 from zplib.image import colorize
 from zplib.image import pyramid
 from zplib.curve import interpolate
 from zplib.curve import spline_geometry
-from scipy import stats
-import freeimage
-import pickle
-import numpy 
+
 from elegant import process_images
 from elegant import worm_spline
 from elegant import datamodel
@@ -19,9 +22,13 @@ class GenerateWormImage:
     def __init__(self, downscale=2, image_shape=(960,512)):
         self.downscale = downscale
 
-        self.WIDTH_TRENDS = pickle.load(open('/home/nicolette/.conda/envs/nicolette/lib/python3.7/site-packages/elegant/width_data/width_trends.pickle', 'rb'))
+        with pkg_resources.resource_stream('elegant', 'width_data/width_trends.pickle') as f:
+            trend_data = pickle.load(f)
+            self.WIDTH_TRENDS = trend_data
+
         self.AVG_WIDTHS = numpy.array([numpy.interp(5, self.WIDTH_TRENDS['ages'], wt) for wt in self.WIDTH_TRENDS['width_trends']])
-        self.AVG_WIDTHS_TCK = self.to_tck(self.AVG_WIDTHS)
+        AVG_WIDTHS_TCK = self.to_tck(self.AVG_WIDTHS)
+        self.AVG_WIDTHS_TCK = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
         self.image_shape = image_shape
 
     def __call__(self, timepoint):
@@ -99,7 +106,10 @@ class WormKeypointDataset:
     def __init__(self, downscale=2, scale=(0,1,2,3), image_size=(960,512)):
         self.downscale = downscale
 
-        self.WIDTH_TRENDS = pickle.load(open('/home/nicolette/.conda/envs/nicolette/lib/python3.7/site-packages/elegant/width_data/width_trends.pickle', 'rb'))
+        with pkg_resources.resource_stream('elegant', 'width_data/width_trends.pickle') as f:
+            trend_data = pickle.load(f)
+            self.WIDTH_TRENDS = trend_data
+
         self.AVG_WIDTHS = numpy.array([numpy.interp(5, self.WIDTH_TRENDS['ages'], wt) for wt in self.WIDTH_TRENDS['width_trends']])
         AVG_WIDTHS_TCK = self.to_tck(self.AVG_WIDTHS)
         self.AVG_WIDTHS_TCK = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
@@ -265,7 +275,10 @@ class VulvaClassifier:
         super().__init__()
         self.downscale = downscale
 
-        self.WIDTH_TRENDS = pickle.load(open('/home/nicolette/.conda/envs/nicolette/lib/python3.7/site-packages/elegant/width_data/width_trends.pickle', 'rb'))
+        with pkg_resources.resource_stream('elegant', 'width_data/width_trends.pickle') as f:
+            trend_data = pickle.load(f)
+            self.WIDTH_TRENDS = trend_data
+
         self.AVG_WIDTHS = numpy.array([numpy.interp(5, self.WIDTH_TRENDS['ages'], wt) for wt in self.WIDTH_TRENDS['width_trends']])
         AVG_WIDTHS_TCK = self.to_tck(self.AVG_WIDTHS)
         self.AVG_WIDTHS_TCK = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
@@ -363,7 +376,10 @@ class WormKeypointDatasetNoFlip:
     def __init__(self, downscale=2, scale=(0,1,2,3), image_size=(960,512)):
         self.downscale = downscale
 
-        self.WIDTH_TRENDS = pickle.load(open('/home/nicolette/.conda/envs/nicolette/lib/python3.7/site-packages/elegant/width_data/width_trends.pickle', 'rb'))
+        with pkg_resources.resource_stream('elegant', 'width_data/width_trends.pickle') as f:
+            trend_data = pickle.load(f)
+            self.WIDTH_TRENDS = trend_data
+
         self.AVG_WIDTHS = numpy.array([numpy.interp(5, self.WIDTH_TRENDS['ages'], wt) for wt in self.WIDTH_TRENDS['width_trends']])
         AVG_WIDTHS_TCK = self.to_tck(self.AVG_WIDTHS)
         self.AVG_WIDTHS_TCK = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
