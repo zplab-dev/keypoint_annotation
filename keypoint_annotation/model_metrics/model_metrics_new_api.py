@@ -1,14 +1,16 @@
-from torch.utils import data
-from zplib.image import colorize
-from zplib.image import pyramid
-from zplib.curve import spline_geometry
-from zplib.curve import interpolate
+import pkg_resources
 import freeimage
 import numpy
 import pickle
 import torch
 
 from scipy.ndimage import gaussian_filter
+
+from torch.utils import data
+from zplib.image import colorize
+from zplib.image import pyramid
+from zplib.curve import spline_geometry
+from zplib.curve import interpolate
 
 from elegant import process_images
 from elegant import worm_widths
@@ -24,11 +26,10 @@ def to_tck(widths):
 
 with pkg_resources.resource_stream('elegant', 'width_data/width_trends.pickle') as f:
     trend_data = pickle.load(f)
-    self.WIDTH_TRENDS = trend_data
+    WIDTH_TRENDS = trend_data
 
-self.AVG_WIDTHS = numpy.array([numpy.interp(5, self.WIDTH_TRENDS['ages'], wt) for wt in self.WIDTH_TRENDS['width_trends']])
-AVG_WIDTHS_TCK = self.to_tck(self.AVG_WIDTHS)
-self.AVG_WIDTHS_TCK = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
+AVG_WIDTHS = numpy.array([numpy.interp(5, WIDTH_TRENDS['ages'], wt) for wt in WIDTH_TRENDS['width_trends']])
+AVG_WIDTHS_TCK = to_tck(AVG_WIDTHS)
 SCALE = [0,1,2,3]
 
 def has_pose(timepoint):

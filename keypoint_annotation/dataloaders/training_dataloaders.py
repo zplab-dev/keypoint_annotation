@@ -232,7 +232,8 @@ class SigmoidKpMap:
 
     def sigmoid(self, x):
         slope = self.slope
-        return 1/(1 + numpy.exp(-slope*x))
+        #we want the range to be (-1, 1)
+        return -1+2/(1 + numpy.exp(-slope*x))
 
 def generate_sigmoid_kp_maps(keypoint_coords, worm_frame_shape, covariate=100):    
     #step 1: get the x,y positions in the new image shape
