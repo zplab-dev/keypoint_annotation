@@ -69,5 +69,12 @@ I have written up a script that will open a riswidget annotator window with the 
 
 ![Additional Annotated worm examples](https://github.com/zplab-dev/keypoint_annotation/blob/master/keypoint_annotation/reproducibility/Examples/examples1.png)
 
+## Tips and tricks for annotating
+
+1.  Use the histogram brightness/contrast toggle.
+    * Alter the brightness/contrast to see the keypoints easier.
+2.  Try your best! Some of these worms are really old and tricky to find the keypoints on.
+3.  You can always ask me if you have questions!
+
 Any questions/comments can be addressed to me!
 Thank you again so much for your help!!!
