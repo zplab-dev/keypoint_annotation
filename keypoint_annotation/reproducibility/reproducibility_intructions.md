@@ -74,7 +74,19 @@ I have written up a script that will open a riswidget annotator window with the 
 1.  Use the histogram brightness/contrast toggle.
     * Alter the brightness/contrast to see the keypoints easier.
 2.  Try your best! Some of these worms are really old and tricky to find the keypoints on.
-3.  You can always ask me if you have questions!
+3.  Take breaks! Staring at worms can make your eyes tired. If you feel like you're seeing shapes in the clouds, take a break and come back to it later.
+4.  You can always ask me if you have questions!
+
+### Tips for annotating specific keypoints:
+1.  Anterior Bulb: Look for circles
+    * The pharynx is basically 2 circles, so look for the the most anterior circle.
+2.  Posterior Bulb: Look for circles posterior of the anterior bulb
+    * The Posterior bulb is the last stop before the intestine. If you can find the intestine try to see if you can find a circlular thing attached to it.
+3.  Vulva: Look for protrusions and "channels"
+    * The vulva is generally near the middle of the worm. You can sometimes see the vulva protruding out the side of the worm.
+    * You can often see the opening of the vulva that looks like a "channel" or the coming together of two parts of the worm.
+7.  Tail: Look for texture changes at the end of the worm
+    * Texture changes at the end of the worm will often go from "dark" to "light". The intestine tapers off towards the end of the worm. Look for that.
 
 Any questions/comments can be addressed to me!
 Thank you again so much for your help!!!
