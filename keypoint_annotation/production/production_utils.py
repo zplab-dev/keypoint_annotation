@@ -96,7 +96,7 @@ def weighted_mean(kp_map):
     return (pred_x, pred_y)
 
 def process_sigmoid(out_kp_map): 
-	return
+	return 1 - abs(out_kp_map)
 
 def process_output(out, downscale=2, sigmoid=False):
     #Way to get the keypoint maps and make it into the xy positions
