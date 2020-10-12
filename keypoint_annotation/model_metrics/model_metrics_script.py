@@ -21,8 +21,6 @@ from keypoint_annotation.production import production_utils
 #model parameters
 downscale = 1
 image_shape = (960,96)
-covariate = covariate
-max_val = max_val
 mask_error = False
 
 def run_model_metrics(model_path_root, covariate, max_val):
