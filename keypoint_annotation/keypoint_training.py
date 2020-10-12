@@ -40,7 +40,7 @@ AVG_WIDTHS_TCK = get_avg_widths()
 
 
 class LossofRegmentation(nn.Module):
-    def __init__(self, downscale=2, scale=(0,1,2,3), image_shape=(960,512)):
+    def __init__(self, downscale=2, scale=(0,1,2,3), image_shape=(960,512), mask_error=True):
         super(LossofRegmentation, self).__init__()
         self.scale = scale
         self.reglLoss = nn.L1Loss(reduction='sum')
@@ -50,6 +50,7 @@ class LossofRegmentation(nn.Module):
         widths_tck = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
         mask = worm_spline.worm_frame_mask(widths_tck, image_size) #make worm mask for training
         self.mask = mask
+        self.mask_error = mask_error
 
     def forward(self, Keypoint0, Output):
             
@@ -61,7 +62,10 @@ class LossofRegmentation(nn.Module):
             scaled_mask = pyramid.pyr_down(self.mask, downscale=s)
             m = numpy.array([[scaled_mask]*C]*N) #get mask into the same dimension as keypoint should be (N, 1, H, W)
             tensor_mask = torch.tensor(m) #make the mask into a tensor
-            l = self.reglLoss(Output[('Keypoint0',i)][tensor_mask>0], Keypoint0[i][tensor_mask>0])/(N*C*H*W)
+            if self.mask_error:
+                l = self.reglLoss(Output[('Keypoint0',i)][tensor_mask>0], Keypoint0[i][tensor_mask>0])/(N*C*H*W)
+            else:
+                l = self.reglLoss(Output[('Keypoint0',i)], Keypoint0[i])/(N*C*H*W)
             print('Loss: {}, scale: {}'.format(l, i))
             K0loss += l
 

@@ -1,75 +1,58 @@
 from __future__ import absolute_import, division, print_function
-import numpy as np
-import torchvision
-from torchvision import datasets, models, transforms
 import os
-import shutil
+import platform
 import torch
-import torch.nn as nn
-from collections import OrderedDict
-import torchvision.models as models
-import torch.utils.model_zoo as model_zoo
-from torch.utils.data import Dataset, DataLoader
-import matplotlib.pyplot as plt
-
-from torch.utils import data
-from zplib.image import colorize
-from zplib.curve import spline_geometry
-import freeimage
 import numpy
 import time
+
+from torch.utils.data import Dataset, DataLoader
+
 from elegant import process_images
 from elegant import worm_spline
 from elegant import datamodel
-import torch
+from elegant.torch import dataset
 
-from keypoint_annotation import keypoint_dataloader
 from keypoint_annotation import keypoint_annotation_model
 from keypoint_annotation import keypoint_training
+from keypoint_annotation.dataloaders import training_dataloaders
+from keypoint_annotation.production import worm_datasets
 
-### Load in Data
-def has_pose(timepoint):
-    pose = timepoint.annotations.get('pose', None)
-    # make sure pose is not None, and center/width tcks are both not None
-    return pose is not None and pose[0] is not None and pose[1] is not None
-    
+##Load in Data
+os_type = platform.system()
+print(os_type)
 
-def has_keypoints(timepoint):
-    keypoints = timepoint.annotations.get('keypoints', None)
-    return keypoints is not None and not None in keypoints.values() and not False in [x in keypoints.keys() for x in ['anterior bulb', 'posterior bulb', 'vulva', 'tail']]
-
-exp_root1 = '/mnt/lugia_array/20170919_lin-04_GFP_spe-9/'
-exp_root2 = '/mnt/lugia_array/20190408_lin-4_spe-9_20C_pos-1/'
-#exp_root2 = '/mnt/9karray/Mosley_Matt/20190408_lin-4_spe-9_20C_pos-1/'
-exp_root3 = '/mnt/lugia_array/20190813_lin4gfp_spe9_control/20190813_lin4gfp_spe9_control/'
-#exp_root3 = '/mnt/scopearray/Mosley_Matt/glp-1/20190813_lin4gfp_spe9_control'
-
-
-experiments = [datamodel.Experiment(path) for path in (exp_root1, exp_root2, exp_root3)]
-
-#filter experiments
-for experiment in experiments:
-    experiment.filter(timepoint_filter=(has_pose, has_keypoints))
-
-train, val, test = datamodel.Timepoints.split_experiments(*experiments, fractions=[0.7, 0.2, 0.1])
-print(len(train), len(val), len(test))
+if os_type == 'Darwin':
+  train = datamodel.Timepoints.from_file('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/train_path_os.txt')
+  val = datamodel.Timepoints.from_file('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/val_path_os.txt')
+  test = datamodel.Timepoints.from_file('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_os.txt')
+  print(len(train), len(val), len(test))
+elif os_type == 'Linux':
+  train = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/train_path_linux.txt')
+  val = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/val_path_linux.txt')
+  test = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_linux.txt')
+  print(len(train), len(val), len(test))
 
 #model parameters
 sets = ['train', 'val']
 scale = [0,1,2,3]      # the number of output layer for U-net
 batch_size = 5
-total_epoch_num = 70 # total number of epoch in training
+total_epoch_num = 25 # total number of epoch in training
 base_lr = 0.0005      # base learning rate/
 downscale = 1
 image_shape = (960,96)
+covariate = 50
+max_val = 100
 
 # cpu or cuda
 device ='cpu'
 if torch.cuda.is_available(): device='cuda:0'
 
-datasets = {'train': keypoint_dataloader.WormKeypointDataset(train, downscale=downscale, scale=scale, image_size=image_shape),
-           'val': keypoint_dataloader.WormKeypointDataset(val, downscale=downscale, scale=scale, image_size=image_shape),
-           'test': keypoint_dataloader.WormKeypointDataset(test, downscale=downscale, scale=scale, image_size=image_shape)}
+kp_map_generator = training_dataloaders.GaussianKpMap(covariate=covariate, max_val=max_val)
+data_generator = training_dataloaders.WormKeypointDataset(kp_map_generator,downscale=downscale, scale=scale, image_size=image_shape)
+
+datasets = {'train': dataset.WormDataset(train, data_generator),
+           'val': dataset.WormDataset(val, data_generator),
+           'test': dataset.WormDataset(test, data_generator)}
 
 dataloaders = {set_name: DataLoader(datasets[set_name], 
                                     batch_size=batch_size,
@@ -79,9 +62,9 @@ dataloaders = {set_name: DataLoader(datasets[set_name],
 dataset_sizes = {set_name: len(datasets[set_name]) for set_name in sets}
 print(dataset_sizes)
 
-project_name = 'new_api_960x96_cov100'
+project_name = '960x96_cov{}_max{}'.format(covariate, max_val)
 #save_dir = './'+project_name
-save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/'+project_name
+save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/'+project_name
 if not os.path.exists(save_dir): os.makedirs(save_dir)
 log_filename = os.path.join(save_dir, 'train.log')
 
@@ -91,7 +74,7 @@ initModel = keypoint_annotation_model.WormRegModel(34, scale, pretrained=True)
 initModel.to(device)
 
 #loss function
-loss = keypoint_training.LossofRegmentation(downscale=downscale, scale=scale, image_shape=image_shape)
+loss = keypoint_training.LossofRegmentation(downscale=downscale, scale=scale, image_shape=image_shape, mask_error=False)
 
 optimizer = torch.optim.Adam([{'params': initModel.parameters()}], lr=base_lr)
 
@@ -106,7 +89,8 @@ ep_time = 0
 fn = open(log_filename, 'a')
 fn.write('\nbase_lr: {}\t scale: {}\t start_epo: {}\t total_epoch_nums: {}\t\n'.format(
             base_lr, scale, ep_time, total_epoch_num))
-fn.write('dataset_sizes: {}:{}\t {}:{}\t {}:{}\t'.format('train', len(train), 'val', len(val), 'test', len(test)))
+fn.write('covariate: {}\t, max_val: {}\t, image_shape: {}\t, downscale: {}\t\n'.format(covariate, max_val, image_shape, downscale))
+fn.write('dataset_sizes: {}:{}\t {}:{}\t {}:{}\t\n'.format('train', len(train), 'val', len(val), 'test', len(test)))
 fn.write('work_dir: {}\n'.format(save_dir))
 fn.close()
 
@@ -128,11 +112,6 @@ new_start = True
 ep_time = 0
 start_epo = 0
 
-#add in the the hyperparameters to the log file
-fn = open(log_filename, 'a')
-fn.write('\nbase_lr: {}\t scale: {}\t start_epo: {}\t total_epoch_nums: {}\t\n'.format(
-            base_lr, scale, ep_time, total_epoch_num))
-fn.close()
 
 log_filename = os.path.join(save_dir,'train.log')    
 for i, keypoint in zip([2], ['vulva_kp']):

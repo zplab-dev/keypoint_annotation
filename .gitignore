@@ -1,4 +1,3 @@
-
 *.cpython*
 .ipynb_checkpoints
 *checkpoint.ipynb
@@ -13,3 +12,8 @@ Thumbs.db
 *.pyc
 *.pyc
 *.pyc
+# OS generated files #
+.DS_Store
+.DS_Store?
+__pycache__/
+

@@ -63,8 +63,10 @@ dataset_sizes = {set_name: len(datasets[set_name]) for set_name in sets}
 print(dataset_sizes)
 
 project_name = '{}x{}_cov{}_max{}'.format(image_shape[0], image_shape[1],covariate, max_val)
+
 if mask_error:
   project_name += '_mask'
+
 #save_dir = './'+project_name
 save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/sigmoid_kp/'+project_name
 if not os.path.exists(save_dir): os.makedirs(save_dir)
@@ -77,6 +79,7 @@ initModel.to(device)
 
 #loss function
 loss = keypoint_training.LossofRegmentation(downscale=downscale, scale=scale, image_shape=image_shape, mask_error=mask_error)
+
 
 optimizer = torch.optim.Adam([{'params': initModel.parameters()}], lr=base_lr)
 
