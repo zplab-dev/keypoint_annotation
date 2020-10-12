@@ -106,7 +106,7 @@ if __name__ == "__main__":
         print("Please include covariate and max_val")
         sys.exit(1)
 
-    project_name = '{}x{}_cov{}_max{}_test'.format(image_shape[0], image_shape[1], covariate, max_val)
+    project_name = '{}x{}_cov{}_max{}'.format(image_shape[0], image_shape[1], covariate, max_val)
     if mask_error:
         project_name+='_mask'
     if os_type == 'Darwin':
