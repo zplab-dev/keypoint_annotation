@@ -1,5 +1,6 @@
 import os
 import platform
+import sys
 from torch.utils import data
 from zplib.image import colorize
 from zplib.curve import spline_geometry
