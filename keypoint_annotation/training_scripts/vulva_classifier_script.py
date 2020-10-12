@@ -68,7 +68,7 @@ def train_vulva(root_dir):
 
     project_name = 'Vulva_Classifier'
     #save_dir = './'+project_name
-    save_dir = root_dir+project_name
+    save_dir = root_dir+'/'+project_name
     print("Save Dir: ", save_dir)
     if not os.path.exists(save_dir): os.makedirs(save_dir)
     log_filename = os.path.join(save_dir, 'train.log')

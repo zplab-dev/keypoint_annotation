@@ -321,10 +321,10 @@ def plot_output(imgList, keypoint_maps, out, epoch, phase, save_dir='./'):
         plt.subplot(figWinNumHeight,figWinNumWidth,subwinCount)
         subwinCount += 1
         kp_map = out[('Keypoint0',0)][sampleIndex].cpu().detach().numpy()
-        per90 = numpy.percentile(kp_map[0], 95)
+        per50 = numpy.percentile(kp_map[0], 50)
         kp_map[0][~mask] = 0
         
-        plt.imshow((kp_map[0]>50).astype(numpy.float32)*1, cmap='jet')
+        plt.imshow((kp_map[0]>per50).astype(numpy.float32)*1, cmap='jet')
         plt.axis('on')
         plt.colorbar()
         plt.title('Keypoint '+str(0))
