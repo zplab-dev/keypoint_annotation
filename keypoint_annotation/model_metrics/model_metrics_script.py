@@ -1,5 +1,5 @@
 import os
-import plaform
+import platform
 from torch.utils import data
 from zplib.image import colorize
 from zplib.curve import spline_geometry
