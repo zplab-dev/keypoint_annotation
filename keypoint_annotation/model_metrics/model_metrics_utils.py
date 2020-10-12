@@ -19,7 +19,7 @@ from elegant import datamodel
 
 from keypoint_annotation import keypoint_annotation_model
 
-from production import production_utils
+from keypoint_annotation.production import production_utils
 
 def to_tck(widths):
     x = numpy.linspace(0, 1, len(widths))
