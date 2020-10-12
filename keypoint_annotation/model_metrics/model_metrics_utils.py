@@ -36,7 +36,7 @@ SCALE = [0,1,2,3]
 
 def predict_timepoint_list(timepoint_list, pred_id = 'pred keypoints test', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
         'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
-        downscale=2, image_shape=(960,512), sigmoid=Falsed):
+        downscale=2, image_shape=(960,512), sigmoid=False):
     """Convience function to predict all timepoints in a timepoint list
     """
     for timepoint in timepoint_list:
