@@ -98,6 +98,8 @@ def run_model_metrics(model_path_root, covariate, max_val):
 
 
 if __name__ == "__main__":
+    os_type = platform.system()
+    print(os_type)
     try:
         covariate, max_val = sys.argv[1], sys.argv[2]
     except IndexError:
