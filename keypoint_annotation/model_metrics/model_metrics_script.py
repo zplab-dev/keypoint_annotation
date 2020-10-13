@@ -20,8 +20,8 @@ from keypoint_annotation.model_metrics import model_metrics_utils
 from keypoint_annotation.production import production_utils
 
 #model parameters
-downscale = 2
-image_shape = (960,128)
+downscale = 1
+image_shape = (960,96)
 mask_error = False
 
 def run_model_metrics(model_path_root, covariate, max_val):
