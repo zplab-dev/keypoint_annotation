@@ -100,11 +100,10 @@ I have written up a script that will open a riswidget annotator window with the 
     ![Tips and tricks for vulva ex2](https://github.com/zplab-dev/keypoint_annotation/blob/master/keypoint_annotation/reproducibility/Examples/vulva_tips1.png)
     
 7.  Tail: Look for texture changes at the end of the worm
-    * Mostly just look for places where the texture changes, often from darker to lighter.
+    * Texture changes at the end of the worm will often go from "dark" to "light". The intestine tapers off towards the end of the worm. Look for that.
     * This is the most arbitrary point, so just do your best.
     
     ![Tips and tricks for tail](https://github.com/zplab-dev/keypoint_annotation/blob/master/keypoint_annotation/reproducibility/Examples/tail_tips.png)
-    * Texture changes at the end of the worm will often go from "dark" to "light". The intestine tapers off towards the end of the worm. Look for that.
-
+    
 Any questions/comments can be addressed to me!
 Thank you again so much for your help!!!
