@@ -21,7 +21,7 @@ from keypoint_annotation.production import production_utils
 
 #model parameters
 downscale = 2
-image_shape = (960,128)
+image_size = (960,128)
 mask_error = False
 
 def run_model_metrics(model_path_root, covariate, max_val):
@@ -43,7 +43,7 @@ def run_model_metrics(model_path_root, covariate, max_val):
 
     device ='cpu'
     if torch.cuda.is_available(): device='cuda:0'
-    image_shape = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
+    image_shape = (int(image_size[0]/downscale), int(image_size[1]/downscale))
     pred_id = 'pred keypoints {}x{}_cov{}_max{}_test'.format(image_shape[0], image_shape[1], covariate, max_val)
     if mask_error:
         pred_id+='_mask'
@@ -107,6 +107,7 @@ if __name__ == "__main__":
         print("Please include covariate and max_val")
         sys.exit(1)
 
+    image_shape = (int(image_size[0]/downscale), int(image_size[1]/downscale))
     project_name = '{}x{}_cov{}_max{}'.format(image_shape[0], image_shape[1], covariate, max_val)
     if mask_error:
         project_name+='_mask'
