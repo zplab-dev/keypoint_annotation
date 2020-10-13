@@ -1,4 +1,5 @@
 import itertools
+import platform
 from keypoint_annotation.model_metrics import model_metrics_script
 
 def multi_model_metrics():
