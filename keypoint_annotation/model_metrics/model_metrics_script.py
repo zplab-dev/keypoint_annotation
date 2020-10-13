@@ -93,9 +93,9 @@ def run_model_metrics(model_path_root, covariate, max_val):
     fn.write('\n\n\n')
     fn.close()
 
-    #save predictions
-    for experiment in experiments:
-        experiment.write_to_disk()
+    """#save predictions
+                for experiment in experiments:
+                    experiment.write_to_disk()"""
 
 
 if __name__ == "__main__":
