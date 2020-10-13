@@ -64,7 +64,7 @@ def preprocess_image(timepoint, downscale):
     bf -= 1
     return bf
 
-def get_worm_frame_image(timepoint, downscale=1, image_size=(960, 512)):
+def get_worm_frame_image(timepoint, downscale=1, image_size=(960, 512), reflect=False):
     bf = preprocess_image(timepoint, downscale)
     annotations = timepoint.annotations
     center_tck, width_tck = annotations['pose']
@@ -74,7 +74,7 @@ def get_worm_frame_image(timepoint, downscale=1, image_size=(960, 512)):
     new_width_tck = (width_tck[0], width_tck[1]/downscale, width_tck[2])
     avg_widths = (AVG_WIDTHS_TCK[0], AVG_WIDTHS_TCK[1]/downscale, AVG_WIDTHS_TCK[2])
 
-    reflect = False
+    reflect = reflect
 
     image_width, image_height = image_shape
     worm_frame = worm_spline.to_worm_frame(bf, new_center_tck, new_width_tck,
@@ -179,3 +179,64 @@ def normalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_size=
         new_keypoints[kp] = (new_x, new_y)
 
     return new_keypoints
+
+def production_predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
+        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}):
+    
+    keypoint_dict = {}
+    #identify dorsal, ventral first
+    regModel = keypoint_annotation_model.init_vuvla_class_model()
+    regModel.load_state_dict(torch.load(model_paths['vulva_class'], map_location='cpu'))
+    regModel.eval()
+    tensor_img = torch.tensor(image).unsqueeze(0)
+    out= regModel(tensor_img)
+    _, vulva_out = torch.max(out, 1)
+    vulva_out = vulva_out.item()
+    #flip vulva if needed
+    """if keypoints['vulva'][1] > 0:
+                    tensor_img = torch.flip(tensor_img, [3])"""
+    #print(tensor_img.size())
+    print("true vulva: ", keypoints['vulva'][1], "    vulva out: ", out, vulva_out)
+
+    for kp, model_kp in zip(['anterior bulb', 'posterior bulb', 'vulva', 'tail'], ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']):
+        #load model
+        #print("Loading model: ", model_paths[model_kp])
+        regModel = keypoint_annotation_model.WormRegModel(34, SCALE, pretrained=True)
+        regModel.load_state_dict(torch.load(model_paths[model_kp], map_location='cpu'))
+        regModel.eval()
+
+        tensor_img = torch.tensor(image).unsqueeze(0)
+        out = regModel(tensor_img)
+        pred_kp = process_reg_output(out, downscale)
+        if kp is 'vulva':
+            #want to preserve what side the vulva is on.
+            if vulva_out <=0:
+                x,y = pred_kp
+                pred_kp = (x, -y)
+        keypoint_dict[kp] = pred_kp
+
+    return keypoint_dict
+
+def output_prediction_image(image, keypoints, model_paths={'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
+        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}):
+    keypoint_maps = []
+    tensor_img = torch.tensor(image).unsqueeze(0)
+    #flip vulva 
+    """if keypoints['vulva'][1] > 0:
+                    tensor_img = torch.flip(tensor_img, [3])"""
+    #print(tensor_img.size())
+
+    for kp, model_kp in zip(['anterior bulb', 'posterior bulb', 'vulva', 'tail'], ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']):
+        #load model
+        #print("Loading model: ", model_paths[model_kp])
+        regModel = keypoint_annotation_model.WormRegModel(34, SCALE, pretrained=True)
+        regModel.load_state_dict(torch.load(model_paths[model_kp], map_location='cpu'))
+        regModel.eval()
+
+        tensor_img = torch.tensor(image).unsqueeze(0)
+        out = regModel(tensor_img)
+        out_kp_map = out[('Keypoint0',0)][0].cpu().detach().numpy()
+        out_kp_map = out_kp_map[0]
+        keypoint_maps.append(out_kp_map)
+
+    return keypoint_maps
