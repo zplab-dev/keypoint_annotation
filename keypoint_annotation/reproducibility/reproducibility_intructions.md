@@ -80,12 +80,30 @@ I have written up a script that will open a riswidget annotator window with the 
 ### Tips for annotating specific keypoints:
 1.  Anterior Bulb: Look for circles
     * The pharynx is basically 2 circles, so look for the the most anterior circle.
+    * Dotted lines indicate where I've identified the "circles" of the anterior pharyngeal bulb
+    
+    ![Tips and tricks for anterior bulbs](https://github.com/zplab-dev/keypoint_annotation/blob/master/keypoint_annotation/reproducibility/Examples/Anterior_bulb_tips1.gif)
+
 2.  Posterior Bulb: Look for circles posterior of the anterior bulb
     * The Posterior bulb is the last stop before the intestine. If you can find the intestine try to see if you can find a circlular thing attached to it.
-3.  Vulva: Look for protrusions and "channels"
+    * Dotted lines indicate where I've identified the "circles" of the posterior pharyngeal bulb
+    
+    ![Tips and tricks for posterior bulbs](https://github.com/zplab-dev/keypoint_annotation/blob/master/keypoint_annotation/reproducibility/Examples/posterior_bulb_tips.gif)
+    
+3.  Vulva: Look for protrusions, "channels", and light spots
     * The vulva is generally near the middle of the worm. You can sometimes see the vulva protruding out the side of the worm.
     * You can often see the opening of the vulva that looks like a "channel" or the coming together of two parts of the worm.
+    * The vulva will often be at the intersection of two light spots in the middle of the worm, where you can also see the "channel"
+    
+    ![Tips and tricks for vulva](https://github.com/zplab-dev/keypoint_annotation/blob/master/keypoint_annotation/reproducibility/Examples/Vulva_tips.png)
+    
+    ![Tips and tricks for vulva ex2](https://github.com/zplab-dev/keypoint_annotation/blob/master/keypoint_annotation/reproducibility/Examples/vulva_tips1.png)
+    
 7.  Tail: Look for texture changes at the end of the worm
+    * Mostly just look for places where the texture changes, often from darker to lighter.
+    * This is the most arbitrary point, so just do your best.
+    
+    ![Tips and tricks for tail](https://github.com/zplab-dev/keypoint_annotation/blob/master/keypoint_annotation/reproducibility/Examples/tail_tips.png)
     * Texture changes at the end of the worm will often go from "dark" to "light". The intestine tapers off towards the end of the worm. Look for that.
 
 Any questions/comments can be addressed to me!
