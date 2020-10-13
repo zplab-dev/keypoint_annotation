@@ -19,12 +19,7 @@ from keypoint_annotation.model_metrics import model_metrics_new_api
 from keypoint_annotation.model_metrics import model_metrics_utils
 from keypoint_annotation.production import production_utils
 
-#model parameters
-downscale = 1
-image_shape = (960,96)
-mask_error = False
-
-def run_model_metrics(model_path_root, covariate, max_val):
+def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False):
     os_type = platform.system()
     print(os_type)
 
@@ -100,6 +95,10 @@ def run_model_metrics(model_path_root, covariate, max_val):
 
 if __name__ == "__main__":
     os_type = platform.system()
+    #model parameters
+    downscale = 1
+    image_shape = (960,96)
+    mask_error = False
     print(os_type)
     try:
         covariate, max_val = sys.argv[1], sys.argv[2]
@@ -116,4 +115,4 @@ if __name__ == "__main__":
     elif os_type == 'Linux':
         model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_api_960x96_cov100'
 
-    run_model_metrics(model_path_root, covariate, max_val)
+    run_model_metrics(model_path_root, covariate, max_val, downscale, image_shape, mask_error)
