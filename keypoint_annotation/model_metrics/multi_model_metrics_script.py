@@ -3,11 +3,6 @@ from keypoint_annotation.model_metrics import model_metrics_script
 
 def multi_model_metrics():
 	#cov_par = [25, 50, 100, 200]
-	
-		print("Training with covariate {}, max_val {}".format(covariate, max_val))
-		save_dir = gaussian_training_script.train_model(covariate, max_val)
-		vulva_classifier_script.train_vulva(save_dir)
-
     os_type = platform.system()
     #model parameters
     downscale = 1
@@ -25,6 +20,7 @@ def multi_model_metrics():
 	    elif os_type == 'Linux':
 	        model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/'+project_name
 
+	    print("Running metrics for model: {}".format(project_name))
 	    model_metrics_script.run_model_metrics(model_path_root, covariate, max_val, downscale, image_shape, mask_error)
 
 if __name__ == "__main__":
