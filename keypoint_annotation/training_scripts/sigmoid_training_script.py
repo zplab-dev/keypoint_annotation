@@ -77,7 +77,7 @@ def train_model(slope, max_val, downscale=1, image_shape=(960,96), mask_error=Fa
     dataset_sizes = {set_name: len(datasets[set_name]) for set_name in sets}
     print(dataset_sizes)
 
-    project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1],slope, max_val)
+    project_name = '{}x{}_slope{}_max{}'.format(image_size[0], image_size[1],slope, max_val)
     if mask_error:
         project_name += '_mask'
     #save_dir = './'+project_name
