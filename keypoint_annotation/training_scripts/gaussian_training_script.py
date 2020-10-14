@@ -45,7 +45,7 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
     covariate = covariate
     max_val = max_val
     #mask_error = False
-    image_size = (image_shape[0]/downscale, image_shape[1]/downscale)
+    image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
 
     # cpu or cuda
     device ='cpu'
