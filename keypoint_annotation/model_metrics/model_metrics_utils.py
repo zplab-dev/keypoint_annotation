@@ -65,7 +65,7 @@ def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {
         downscale=2, image_shape=(960,512), sigmoid=False):
     
     #get worm-frame image
-    worm_frame_image = production_utils.get_worm_frame_image(timepoint, downscale, image_shape)
+    worm_frame_image = production_utils.get_worm_frame_image(timepoint, downscale, image_shape, reflect=False)
     """if keypoints['vulva'][1] > 0:
                         worm_frame_image = numpy.flip(worm_frame_image, axis=1)"""
     worm_frame_image = numpy.expand_dims(worm_frame_image, axis=0)

@@ -24,7 +24,7 @@ from keypoint_annotation import keypoint_annotation_model
 from keypoint_annotation import vulva_classifier_training
 from keypoint_annotation.production import worm_datasets
 
-def train_vulva(root_dir):
+def train_vulva(root_dir, downscale=1, image_shape=(960,64)):
     os_type = platform.system()
     print(os_type)
 
@@ -43,10 +43,10 @@ def train_vulva(root_dir):
     sets = ['train', 'val']
     scale = [0,1,2,3]      # the number of output layer for U-net
     batch_size = 5
-    total_epoch_num = 25 # total number of epoch in training
+    total_epoch_num = 10 # total number of epoch in training
     base_lr = 0.0005      # base learning rate/
-    downscale = 1
-    image_shape = (960,64)
+    #downscale = 1
+    #image_shape = (960,64)
 
     # cpu or cuda
     device ='cpu'
