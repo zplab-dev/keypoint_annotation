@@ -1,4 +1,5 @@
 import itertools
+import platform
 
 from keypoint_annotation.training_scripts import gaussian_training_script
 from keypoint_annotation.training_scripts import vulva_classifier_script
@@ -18,6 +19,7 @@ def parameter_test():
         if mask_error:
             project_name += '_mask'
         #save_dir = './'+project_name
+        os_type = platform.system()
         if os_type == 'Darwin':
             save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/'+project_name
         elif os_type == 'Linux':
