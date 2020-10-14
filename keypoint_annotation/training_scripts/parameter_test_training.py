@@ -14,7 +14,7 @@ def parameter_test():
 
     for covariate, max_val in itertools.product(cov_par, val_par):
         print("Training with covariate {}, max_val {}".format(covariate, max_val))
-        image_size = (image_shape[0]/downscale, image_shape[1]/downscale)
+        image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
         project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1],covariate, max_val)
         if mask_error:
             project_name += '_mask'
