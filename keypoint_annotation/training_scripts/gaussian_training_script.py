@@ -45,6 +45,7 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
     covariate = covariate
     max_val = max_val
     #mask_error = False
+    image_size = (image_shape[0]/downscale, image_shape[1]/downscale)
 
     # cpu or cuda
     device ='cpu'
@@ -65,7 +66,7 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
     dataset_sizes = {set_name: len(datasets[set_name]) for set_name in sets}
     print(dataset_sizes)
 
-    project_name = '960x96_cov{}_max{}'.format(covariate, max_val)
+    project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1],covariate, max_val)
     if mask_error:
         project_name += '_mask'
     #save_dir = './'+project_name

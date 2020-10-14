@@ -24,7 +24,7 @@ from keypoint_annotation import keypoint_annotation_model
 from keypoint_annotation import vulva_classifier_training
 from keypoint_annotation.production import worm_datasets
 
-def train_vulva(root_dir, downscale=1, image_shape=(960,64)):
+def train_vulva(root_dir, downscale=1, image_shape=(960,96)):
     os_type = platform.system()
     print(os_type)
 
