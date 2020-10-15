@@ -19,7 +19,7 @@ from keypoint_annotation.model_metrics import model_metrics_new_api
 from keypoint_annotation.model_metrics import model_metrics_utils
 from keypoint_annotation.production import production_utils
 
-def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False):
+def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, sigmoid=False):
     os_type = platform.system()
     print(os_type)
 
@@ -62,8 +62,8 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
     #model_metrics_utils.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
 
     for timepoint in test:
-            model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape)
-            model_metrics_utils.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape)
+            model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
+            model_metrics_utils.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape, sigmoid)
 
     #output data:
     fn = open(log_filename, 'a')

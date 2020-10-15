@@ -11,6 +11,7 @@ def multi_model_metrics():
     mask_error = False
     cov_par = [100]
     val_par = [1, 3, 100]
+    sigmoid = False
     for covariate, max_val in itertools.product(cov_par, val_par):
         image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
         project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
@@ -22,7 +23,7 @@ def multi_model_metrics():
             model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/'+project_name
 
         print("Running metrics for model: {}".format(project_name))
-        model_metrics_script.run_model_metrics(model_path_root, covariate, max_val, downscale, image_shape, mask_error)
+        model_metrics_script.run_model_metrics(model_path_root, covariate, max_val, downscale, image_shape, mask_error, sigmoid
 
 if __name__ == "__main__":
     multi_model_metrics()
