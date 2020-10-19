@@ -6,11 +6,13 @@ def multi_model_metrics():
     #cov_par = [25, 50, 100, 200]
     os_type = platform.system()
     #model parameters
+    cov_par = [25, 50, 200]
+    #cov_par = [100]
+    #val_par = [1, 3, 100]
+    val_par = [3]
     downscale = 1
     image_shape = (960,96)
     mask_error = False
-    cov_par = [100]
-    val_par = [1, 3, 100]
     sigmoid = False
     for covariate, max_val in itertools.product(cov_par, val_par):
         image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
