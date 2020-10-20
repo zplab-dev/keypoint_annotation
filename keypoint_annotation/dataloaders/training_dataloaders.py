@@ -234,21 +234,3 @@ class SigmoidKpMap:
         slope = self.slope
         #we want the range to be (-1, 1)
         return -1+2/(1 + numpy.exp(-slope*x))
-
-def generate_sigmoid_kp_maps(keypoint_coords, worm_frame_shape, covariate=100):    
-    #step 1: get the x,y positions in the new image shape
-    xs, ys = keypoint_coords
-
-    #step 2: make the gaussian hotspot over the x,y positions of the images
-    keypoint_maps = []
-    for x,y in zip(xs, ys):
-        xidx, yidx = numpy.indices(worm_frame_shape)
-        points = numpy.stack((xidx, yidx), axis=-1)
-        pdf = stats.multivariate_normal.pdf(points, (x,y), covariate) #make gaussian pdf centered at x,y
-        #kp_image = numpy.ones(worm_frame_shape)*pdf
-        #scale image to make training easier
-        kp_image = pdf/pdf.max() #get everything into the range 0,1
-        kp_image *= 100 #to scale things to make loss better when training
-        keypoint_maps.append(kp_image.astype(numpy.float32))
-
-    return keypoint_maps
