@@ -8,7 +8,7 @@ def multi_model_metrics():
     #model parameters
     cov_par = [25, 50, 200]
     #cov_par = [100]
-    val_par = [1, 3, 100]
+    val_par = [3, 100]
     slope =[0.25]
     #val_par = [3]
     downscale = 1
