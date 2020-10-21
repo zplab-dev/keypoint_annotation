@@ -12,6 +12,8 @@ from elegant import datamodel
 import torch
 from datetime import datetime
 
+import matplotlib.pyplot as plt
+
 from elegant.torch import dataset
 
 from keypoint_annotation.production import worm_datasets
