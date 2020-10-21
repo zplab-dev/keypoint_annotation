@@ -7,7 +7,7 @@ def multi_model_metrics():
     os_type = platform.system()
     #model parameters
     cov_par = [100]
-    val_par = [1, 3, 100]
+    val_par = [1, 100]
     slope =[0.25]
     #val_par = [3]
     downscale = 1

@@ -52,21 +52,21 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
                  'vulva_kp':model_path_root+'/vulva_kp/bestValModel.paramOnly', 
                  'tail':model_path_root+'/tail/bestValModel.paramOnly'}
 
-    """log_filename = os.path.join(model_path_root,'model_metrics.log')
-                fn = open(log_filename,'a')
-                time = datetime.now()
-                fn.write('---------------- Model metrics run on {} ---------------------\n'.format(time))
-                fn.write('Model Paths: \n')
-                for k, p in model_paths.items():
-                    fn.write('\t{}: {}\n'.format(k,p))
-                fn.close()
-            
-                #model_metrics_utils.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
-            
-                for timepoint in test:
-                        model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
-                        model_metrics_utils.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape, sigmoid)
-            """
+    log_filename = os.path.join(model_path_root,'model_metrics.log')
+    fn = open(log_filename,'a')
+    time = datetime.now()
+    fn.write('---------------- Model metrics run on {} ---------------------\n'.format(time))
+    fn.write('Model Paths: \n')
+    for k, p in model_paths.items():
+        fn.write('\t{}: {}\n'.format(k,p))
+    fn.close()
+
+    #model_metrics_utils.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
+
+    for timepoint in test:
+            model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
+            model_metrics_utils.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape, sigmoid)
+
     #output the worst error images
     save_dir = model_path_root+"/worst_images/"
     if not os.path.exists(save_dir): os.makedirs(save_dir)
@@ -77,33 +77,33 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
         sorted_test = model_metrics_utils.sort_tp_list_by_error(test, i, pred_id=pred_id)
         plot_output_images(sorted_test, i, save_name, model_paths=model_paths, downscale=downscale, image_shape=image_shape, pred_id=pred_id)
 
-    """#output data:
-                fn = open(log_filename, 'a')
-                fn.write('Accuracy Metrics: \n')
-                dist = model_metrics_utils.get_accuracy_tplist(test, pred_id=pred_id)
-                for key, acc in dist.items():
-                    fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
-            
-                fn.write("\nMin/max for each keypoint\n")
-                for key, acc in dist.items():
-                    fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
-            
-                worst_dist = model_metrics_utils.get_accuracy_tplist(test, pred_id='worst case keypoints')
-                fn.write('\nWorst Case Metrics: \n')
-                for key, acc in worst_dist.items():
-                    fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
-            
-                fn.write("\nMin/max for each keypoint: \n")
-                for key, acc in worst_dist.items():
-                    fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
-            
-                fn.write('\n\n\n')
-                fn.close()
-            
-                #save predictions
-                experiments = set([tp.position.experiment for tp in test])
-                for experiment in experiments:
-                    experiment.write_to_disk() """
+    #output data:
+    fn = open(log_filename, 'a')
+    fn.write('Accuracy Metrics: \n')
+    dist = model_metrics_utils.get_accuracy_tplist(test, pred_id=pred_id)
+    for key, acc in dist.items():
+        fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
+
+    fn.write("\nMin/max for each keypoint\n")
+    for key, acc in dist.items():
+        fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
+
+    worst_dist = model_metrics_utils.get_accuracy_tplist(test, pred_id='worst case keypoints')
+    fn.write('\nWorst Case Metrics: \n')
+    for key, acc in worst_dist.items():
+        fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
+
+    fn.write("\nMin/max for each keypoint: \n")
+    for key, acc in worst_dist.items():
+        fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
+
+    fn.write('\n\n\n')
+    fn.close()
+
+    #save predictions
+    experiments = set([tp.position.experiment for tp in test])
+    for experiment in experiments:
+        experiment.write_to_disk()
 
 
 def plot_output_images(timepoint_list, kp_idx, save_name, model_paths, downscale=1, image_shape=(960,96) , pred_id = 'pred keypoints'):
