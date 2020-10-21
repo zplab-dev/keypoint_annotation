@@ -72,7 +72,7 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
     if not os.path.exists(save_dir): os.makedirs(save_dir)
 
     keypoint_list = ['anterior_bulb','posterior_bulb','vulva','tail', 'vulva_class']
-    for i in range(5):
+    for i in range(4):
         save_name = save_dir+"{}_top5.png".format(keypoint_list[i])
         sorted_test = model_metrics_utils.sort_tp_list_by_error(test, i, pred_id=pred_id)
         plot_output_images(test, i, save_name, model_paths=model_paths, downscale=downscale, image_shape=image_shape, pred_id=pred_id)
@@ -110,7 +110,7 @@ def plot_output_images(timepoint_list, kp_idx, save_name, model_paths, downscale
         else:
             gtkp = gtnorm_kp[kp]
             pkp = pnorm_kp[kp]
-            
+
         print("gt:", gtkp, "pkp:",pkp)
         circle = plt.Circle((pkp[1],pkp[0]), 2 , color='r')
         circle1 = plt.Circle((gtkp[1],gtkp[0]), 2 , color='cyan')
