@@ -75,10 +75,10 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
     for i in range(5):
         save_name = save_dir+"{}_top5.png".format(keypoint_list[i])
         sorted_test = model_metrics_utils.sort_tp_list_by_error(test, i, pred_id=pred_id)
-        plot_output_images(test, i, save_name, downscale=downscale, image_shape=image_shape, pred_id=pred_id)
+        plot_output_images(test, i, save_name, model_paths=model_paths, downscale=downscale, image_shape=image_shape, pred_id=pred_id)
 
 
-def plot_output_images(timepoint_list, kp_idx, save_name, downscale=1, image_shape=(960,96) , pred_id = 'pred keypoints'):
+def plot_output_images(timepoint_list, kp_idx, save_name, model_paths, downscale=1, image_shape=(960,96) , pred_id = 'pred keypoints'):
     fig, ax = plt.subplots(5,2, figsize=(15,30))
     for i in range(5):
         #axx = int(i/5)
