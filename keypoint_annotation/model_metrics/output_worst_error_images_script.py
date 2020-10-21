@@ -107,7 +107,7 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
 
 
 def plot_output_images(timepoint_list, kp_idx, save_name, model_paths, downscale=1, image_shape=(960,96) , pred_id = 'pred keypoints'):
-    plt.figure(figsize=(10,10), dpi=88, facecolor='w', edgecolor='k')
+    plt.figure(figsize=(22,20), dpi=88, facecolor='w', edgecolor='k')
     fig, ax = plt.subplots(5,2, figsize=(15,30))
     for i in range(5):
         #axx = int(i/5)
