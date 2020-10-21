@@ -65,7 +65,7 @@ def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {
         downscale=2, image_shape=(960,512), sigmoid=False):
     
     #get worm-frame image
-    worm_frame_image = production_utils.get_worm_frame_image(timepoint, downscale, image_shape)
+    worm_frame_image = production_utils.get_worm_frame_image(timepoint, downscale, image_shape, reflect=False)
     """if keypoints['vulva'][1] > 0:
                         worm_frame_image = numpy.flip(worm_frame_image, axis=1)"""
     worm_frame_image = numpy.expand_dims(worm_frame_image, axis=0)
@@ -213,7 +213,7 @@ def calculate_tp_age(timepoint):
 
     return hours
 
-def get_accuracy_and_age(experiment, pred_id = 'pred keypoints test'):
+def get_accuracy_and_age(experiment, pred_id = 'pred keypoints'):
     dist = {'anterior bulb':[], 'posterior bulb':[], 'vulva':[],'vulva class':[], 'tail':[], 'age': []}    
     for worm_name, positions in experiment.positions.items():
         for timepoint in positions.timepoints.values():
@@ -227,4 +227,29 @@ def get_accuracy_and_age(experiment, pred_id = 'pred keypoints test'):
 
     return dist
 
+def sort_tp_list_by_error(tp_list, kp_idx, pred_id = 'pred keypoints'):
+    """Note that this only works if you've run the predict_timepoint_list function already"""
+    keypoint_list = ['anterior bulb','posterior bulb','vulva','tail', 'vulva class']
 
+    def get_kp_accuracy(timepoint, keypoint=keypoint_list[kp_idx], pred_id= pred_id):
+        gt_kp = timepoint.annotations.get('keypoints', None)
+        pose = timepoint.annotations.get('pose', None)
+        pred_kp = timepoint.annotations.get(pred_id)
+        dist = 0
+        if gt_kp is None or pred_kp is None or None in gt_kp.values() or None in pred_kp.values():
+            print("None found in keypoint")
+            return
+        elif False in [x in list(gt_kp.keys()) for x in ['anterior bulb','posterior bulb','vulva','tail']]: 
+            return
+        else:
+            gtx, gty = gt_kp[keypoint]
+            px, py = pred_kp[keypoint]
+            if keypoint == 'vulva class':
+                dist = ((gty* py) >= 0) #test sign
+            else:
+                dist = gtx-px
+        print(timepoint.position.experiment.name,timepoint.position.name, timepoint.name, dist)
+                
+        return abs(dist)
+
+    return sorted(test, key=get_kp_accuracy, reverse=True)

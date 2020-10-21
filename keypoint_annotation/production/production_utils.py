@@ -95,8 +95,9 @@ def weighted_mean(kp_map):
     print("pred_x, pred_y: ", pred_x, pred_y)
     return (pred_x, pred_y)
 
-def process_sigmoid(out_kp_map): 
-	return 1 - abs(out_kp_map)
+def process_sigmoid(out_kp_map):
+	max_val = out_kp_map.max() #can have a variable value as the max value
+	return max_val - abs(out_kp_map)
 
 def process_output(out, downscale=2, sigmoid=False):
     #Way to get the keypoint maps and make it into the xy positions

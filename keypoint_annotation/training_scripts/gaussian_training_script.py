@@ -18,7 +18,7 @@ from keypoint_annotation.dataloaders import training_dataloaders
 from keypoint_annotation.production import worm_datasets
 
 
-def train_model(covariate, max_val):
+def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False):
     ##Load in Data
     os_type = platform.system()
     print(os_type)
@@ -40,11 +40,12 @@ def train_model(covariate, max_val):
     batch_size = 5
     total_epoch_num = 25 # total number of epoch in training
     base_lr = 0.0005      # base learning rate/
-    downscale = 1
-    image_shape = (960,96)
+    #downscale = 1
+    #image_shape = (960,96)
     covariate = covariate
     max_val = max_val
-    mask_error = False
+    #mask_error = False
+    image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
 
     # cpu or cuda
     device ='cpu'
@@ -65,7 +66,7 @@ def train_model(covariate, max_val):
     dataset_sizes = {set_name: len(datasets[set_name]) for set_name in sets}
     print(dataset_sizes)
 
-    project_name = '960x96_cov{}_max{}'.format(covariate, max_val)
+    project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1],covariate, max_val)
     if mask_error:
         project_name += '_mask'
     #save_dir = './'+project_name
