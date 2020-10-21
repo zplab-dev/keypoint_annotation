@@ -8,9 +8,10 @@ from keypoint_annotation.training_scripts import sigmoid_training_script
 def parameter_test():
     #cov_par = [25, 50, 200]
     #cov_par = [100]
-    val_par = [1]
-    slope =[0.25]
-    #val_par = [3]
+    #val_par = [1,3,100]
+    #slope = [0.25]
+    slope =[0.01,  0.5,  1,  10]
+    val_par = [3]
     downscale = 1
     image_shape = (960,96)
     mask_error = False
