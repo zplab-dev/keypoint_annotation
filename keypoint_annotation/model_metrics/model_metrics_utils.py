@@ -233,10 +233,10 @@ def sort_tp_list_by_error(tp_list, kp_idx, pred_id = 'pred keypoints'):
 
     def get_kp_accuracy(timepoint, keypoint=keypoint_list[kp_idx], pred_id= pred_id):
         acc = get_tp_accuracy(timepoint, pred_id)
-            try:
-                dist = acc[keypoint]
-            except TypeError:
-                return 0
+        try:
+            dist = acc[keypoint]
+        except TypeError:
+            return 0
 
         return abs(dist)
         """gt_kp = timepoint.annotations.get('keypoints', None)
