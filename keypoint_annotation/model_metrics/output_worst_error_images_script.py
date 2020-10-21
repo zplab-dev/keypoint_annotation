@@ -63,7 +63,7 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
 
     #model_metrics_utils.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
 
-    for timepoint in test[:10]:
+    for timepoint in test:
             model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
             model_metrics_utils.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape, sigmoid)
 
@@ -76,6 +76,34 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
         save_name = save_dir+"{}_top5.png".format(keypoint_list[i])
         sorted_test = model_metrics_utils.sort_tp_list_by_error(test, i, pred_id=pred_id)
         plot_output_images(test, i, save_name, model_paths=model_paths, downscale=downscale, image_shape=image_shape, pred_id=pred_id)
+
+    #output data:
+    fn = open(log_filename, 'a')
+    fn.write('Accuracy Metrics: \n')
+    dist = model_metrics_utils.get_accuracy_tplist(test, pred_id=pred_id)
+    for key, acc in dist.items():
+        fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
+
+    fn.write("\nMin/max for each keypoint\n")
+    for key, acc in dist.items():
+        fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
+
+    worst_dist = model_metrics_utils.get_accuracy_tplist(test, pred_id='worst case keypoints')
+    fn.write('\nWorst Case Metrics: \n')
+    for key, acc in worst_dist.items():
+        fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
+
+    fn.write("\nMin/max for each keypoint: \n")
+    for key, acc in worst_dist.items():
+        fn.write('{}: {}, {}\n'.format(key, numpy.min(abs(numpy.array(acc))), numpy.max(abs(numpy.array(acc)))))
+
+    fn.write('\n\n\n')
+    fn.close()
+
+    #save predictions
+    experiments = set([tp.position.experiment for tp in test])
+    for experiment in experiments:
+        experiment.write_to_disk() 
 
 
 def plot_output_images(timepoint_list, kp_idx, save_name, model_paths, downscale=1, image_shape=(960,96) , pred_id = 'pred keypoints'):
@@ -112,8 +140,8 @@ def plot_output_images(timepoint_list, kp_idx, save_name, model_paths, downscale
             pkp = pnorm_kp[kp]
 
         print("gt:", gtkp, "pkp:",pkp)
-        circle = plt.Circle((pkp[1],pkp[0]), 2 , color='r')
-        circle1 = plt.Circle((gtkp[1],gtkp[0]), 2 , color='cyan')
+        circle = plt.Circle((pkp[1],pkp[0]), 3 , color='r')
+        circle1 = plt.Circle((gtkp[1],gtkp[0]), 3 , color='cyan')
         ax[axx, axy].imshow(tp_image, cmap='gray')
         ax[axx, axy].add_patch(circle)
         ax[axx, axy].add_patch(circle1)
