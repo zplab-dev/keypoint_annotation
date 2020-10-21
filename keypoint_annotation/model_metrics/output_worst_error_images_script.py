@@ -75,7 +75,7 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
     for i in range(4):
         save_name = save_dir+"{}_top5.png".format(keypoint_list[i])
         sorted_test = model_metrics_utils.sort_tp_list_by_error(test, i, pred_id=pred_id)
-        plot_output_images(test, i, save_name, model_paths=model_paths, downscale=downscale, image_shape=image_shape, pred_id=pred_id)
+        plot_output_images(sorted_test, i, save_name, model_paths=model_paths, downscale=downscale, image_shape=image_shape, pred_id=pred_id)
 
     #output data:
     fn = open(log_filename, 'a')
