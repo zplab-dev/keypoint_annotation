@@ -238,7 +238,7 @@ def sort_tp_list_by_error(tp_list, kp_idx, pred_id = 'pred keypoints'):
         dist = 0
         if gt_kp is None or pred_kp is None or None in gt_kp.values() or None in pred_kp.values():
             print("None found in keypoint")
-            return
+            return 0
         elif False in [x in list(gt_kp.keys()) for x in ['anterior bulb','posterior bulb','vulva','tail']]: 
             return
         else:
@@ -252,4 +252,4 @@ def sort_tp_list_by_error(tp_list, kp_idx, pred_id = 'pred keypoints'):
                 
         return abs(dist)
 
-    return sorted(test, key=get_kp_accuracy, reverse=True)
+    return sorted(tp_list, key=get_kp_accuracy, reverse=True)
