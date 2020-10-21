@@ -14,7 +14,7 @@ def multi_model_metrics():
     image_shape = (960,96)
     mask_error = False
     sigmoid = False
-    for covariate, max_val in itertools.product(slope, val_par):
+    for covariate, max_val in itertools.product(cov_par, val_par):
         image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
         project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
         if mask_error:
