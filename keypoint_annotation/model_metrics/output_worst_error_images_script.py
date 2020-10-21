@@ -149,7 +149,7 @@ def plot_output_images(timepoint_list, kp_idx, save_name, model_paths, downscale
         circle.set(label='Pred kp')
         circle1.set(label='GT kp')
         
-        ax[axx, 1].imshow(output_images[kp_idx], cmap='jet')
+        ax[axx, 1].imshow(output_images[kp_idx])
         ax[axx, 1].axis('on')
         
         
