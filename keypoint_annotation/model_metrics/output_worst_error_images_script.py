@@ -100,8 +100,17 @@ def plot_output_images(timepoint_list, kp_idx, save_name, model_paths, downscale
         
         pnorm_kp = production_utils.normalize_pred_keypoints(timepoint, pred_keypoints, downscale=downscale, image_size=image_shape)
         gtnorm_kp = production_utils.normalize_pred_keypoints(timepoint, gt_keypoints, downscale=downscale, image_size=image_shape)
-        gtkp = gtnorm_kp[kp]
-        pkp = pnorm_kp[kp]
+        if kp == 'vulva class':
+            gt_vulva = 0
+            p_vulva = 0
+            if gtnorm_kp['vulva'][1] >0:
+                gt_vulva = 1
+            if pnorm_kp['vulva'][1] >0:
+                p_vulva = 1
+        else:
+            gtkp = gtnorm_kp[kp]
+            pkp = pnorm_kp[kp]
+            
         print("gt:", gtkp, "pkp:",pkp)
         circle = plt.Circle((pkp[1],pkp[0]), 2 , color='r')
         circle1 = plt.Circle((gtkp[1],gtkp[0]), 2 , color='cyan')
