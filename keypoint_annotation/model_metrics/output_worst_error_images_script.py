@@ -120,7 +120,7 @@ def plot_output_images(timepoint_list, kp_idx, save_name, model_paths, downscale
         kp = keypoint_list[kp_idx]
         keypoints = timepoint.annotations['keypoints']
 
-        reflect = if keypoints['vulva'][1] > 0
+        reflect = keypoints['vulva'][1] > 0
         tensor_img = torch.flip(tensor_img, [3])
         tp_image = production_utils.get_worm_frame_image(timepoint, downscale=downscale, image_size=image_shape, reflect=reflect)
         extend_img = numpy.array([tp_image, tp_image, tp_image])
