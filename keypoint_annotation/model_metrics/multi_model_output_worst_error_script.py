@@ -3,13 +3,13 @@ import platform
 from keypoint_annotation.model_metrics import output_worst_error_images_script
 
 def multi_model_metrics():
-    #cov_par = [25, 50, 200]
+    cov_par = [25, 50, 200]
     os_type = platform.system()
     #model parameters
-    cov_par = [100]
-    val_par = [1, 3, 100]
+    #cov_par = [100]
+    #val_par = [1, 3, 100]
     slope =[0.25]
-    #val_par = [3]
+    val_par = [3]
     downscale = 1
     image_shape = (960,96)
     mask_error = False
