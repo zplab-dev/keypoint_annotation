@@ -15,15 +15,18 @@ def set_up_annotations(initials, os):
     initials = initials
     timepoint_path, new_root = None, None
     if os == 'Darwin':
-        timepoint_path = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/sampled_timepoints_os.txt'
-        new_root = pathlib.Path('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/')
+        #timepoint_path = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/sampled_timepoints_os.txt'
+        timepoint_path = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_os.txt'
+        new_root = pathlib.Path('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/test_data/')
     elif os == 'Linux':
-        timepoint_path = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/sampled_timepoints_linux.txt'
-        new_root = pathlib.Path('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/')
+        #timepoint_path = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/sampled_timepoints_linux.txt'
+        timepoint_path = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_linux.txt'
+        new_root = pathlib.Path('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/test_data/')
     elif os == 'Windows':
         #assume they are running things from mobaxterm (not the best idea, but it's what I have)
-        timepoint_path = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/sampled_timepoints_linux.txt'
-        new_root = pathlib.Path('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/')
+        #0timepoint_path = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/sampled_timepoints_linux.txt'
+        timepoint_path = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_linux.txt'
+        new_root = pathlib.Path('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/reproducibility/test_data/')
 
     sample_timepoints = datamodel.Timepoints.from_file(timepoint_path)
     
