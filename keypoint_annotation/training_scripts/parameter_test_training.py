@@ -6,8 +6,8 @@ from keypoint_annotation.training_scripts import vulva_classifier_script
 from keypoint_annotation.training_scripts import sigmoid_training_script
 
 def parameter_test():
-    #cov_par = [25, 50, 200]
-    cov_par = [25, 200]
+    cov_par = [25, 50, 100, 200]
+    #cov_par = [25, 200]
     #cov_par = [100]
     #val_par = [1,3,100]
     #slope = [0.25]
