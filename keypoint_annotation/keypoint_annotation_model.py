@@ -5,7 +5,7 @@ from torchvision import datasets, models, transforms
 import torch
 import torch.nn as nn
 from collections import OrderedDict
-from layers import *
+from keypoint_annotation.layers import *
 import torchvision.models as models
 import torch.utils.model_zoo as model_zoo
 import numpy as np
