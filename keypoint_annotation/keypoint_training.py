@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 from zplib.curve import interpolate
 from zplib.image import pyramid
-import keypoint_annotation_model
+from keypoint_annotation import keypoint_annotation_model
 import elegant
 from elegant import worm_spline
 #since all the worms will be in the same orientation/worm pixels, hardcode in a worm_frame_mask
