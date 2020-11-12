@@ -132,9 +132,6 @@ class WormKeypointDataset:
 
         #step 1: get the x,y positions in the new image shape
         length = spline_geometry.arc_length(center_tck)
-        sample_dist = interpolate.spline_interpolate(width_tck, length).max()+20
-        width = int(round(sample_dist*2))
-
         xs = numpy.array([keypoints[k][0] for k in ('anterior bulb', 'posterior bulb', 'vulva', 'tail')])
         x_percent = xs/length
         new_xs = x_percent*image_shape[0]
