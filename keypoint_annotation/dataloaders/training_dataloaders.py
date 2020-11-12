@@ -126,9 +126,9 @@ class WormKeypointDataset:
         return worm_frame
 
     def get_keypoint_coords(self, timepoint, image_shape):
-        annotations = timepoint.annotations
-        center_tck, width_tck = annotations['pose']
-        keypoints = annotations['keypoints']
+        #annotations = timepoint.annotations
+        center_tck, width_tck = timepoint.annotations['pose']
+        keypoints = timepoint.annotations['keypoints']
 
         #step 1: get the x,y positions in the new image shape
         length = spline_geometry.arc_length(center_tck)
