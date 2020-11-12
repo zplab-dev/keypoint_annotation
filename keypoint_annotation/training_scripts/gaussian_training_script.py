@@ -38,7 +38,7 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
     sets = ['train', 'val']
     scale = [0,1,2,3]      # the number of output layer for U-net
     batch_size = 5
-    total_epoch_num = 25 # total number of epoch in training
+    total_epoch_num = 150 # total number of epoch in training
     base_lr = 0.0005      # base learning rate/
     #downscale = 1
     #image_shape = (960,96)
@@ -71,9 +71,9 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
         project_name += '_mask'
     #save_dir = './'+project_name
     if os_type == 'Darwin':
-        save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/'+project_name
+        save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/150_epochs/'+project_name
     elif os_type == 'Linux':
-        save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/'+project_name
+        save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/150_epochs/'+project_name
 
     if not os.path.exists(save_dir): os.makedirs(save_dir)
     log_filename = os.path.join(save_dir, 'train.log')
