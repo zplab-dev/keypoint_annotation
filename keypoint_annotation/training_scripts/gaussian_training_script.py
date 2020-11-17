@@ -79,7 +79,7 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
         save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/150_epochs/'+project_name
     elif os_type == 'Linux':
         #save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/150_epochs/'+project_name
-        save_dir = '/mnt/squidarray/Laird_Nicolette/keypoint_annotations/1D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name
+        save_dir = '/mnt/squidarray/Laird_Nicolette/keypoint_annotations/2D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name
     if not os.path.exists(save_dir): os.makedirs(save_dir)
     log_filename = os.path.join(save_dir, 'train.log')
 
