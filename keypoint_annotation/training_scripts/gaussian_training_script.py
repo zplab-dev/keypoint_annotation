@@ -18,7 +18,7 @@ from keypoint_annotation.dataloaders import training_dataloaders
 from keypoint_annotation.production import worm_datasets
 
 
-def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, total_epoch_num=25):
+def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, total_epoch_num=25, dim1D=False):
     ##Load in Data
     os_type = platform.system()
     print(os_type)
@@ -56,7 +56,10 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
     device ='cpu'
     if torch.cuda.is_available(): device='cuda:0'
 
-    kp_map_generator = training_dataloaders.GaussianKpMap(covariate=covariate, max_val=max_val)
+    if dim1D:
+        kp_map_generator = training_dataloaders.GaussianKpMap1D(covariate=covariate, max_val=max_val)
+    else:
+        kp_map_generator = training_dataloaders.GaussianKpMap2D(covariate=covariate, max_val=max_val)
     data_generator = training_dataloaders.WormKeypointDataset(kp_map_generator,downscale=downscale, scale=scale, image_size=image_shape)
 
     datasets = {'train': dataset.WormDataset(train, data_generator),
@@ -76,10 +79,17 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
         project_name += '_mask'
     #save_dir = './'+project_name
     if os_type == 'Darwin':
-        save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/150_epochs/'+project_name
+        if dim1D:
+            save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/1D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name+project_name
+        else:
+            save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/2D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name+project_name
+
     elif os_type == 'Linux':
         #save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/150_epochs/'+project_name
-        save_dir = '/mnt/squidarray/Laird_Nicolette/keypoint_annotations/2D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name
+        if dim1D:
+            save_dir = '/mnt/squidarray/Laird_Nicolette/keypoint_annotations/1D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name
+        else:
+            save_dir = '/mnt/squidarray/Laird_Nicolette/keypoint_annotations/2D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name
     if not os.path.exists(save_dir): os.makedirs(save_dir)
     log_filename = os.path.join(save_dir, 'train.log')
 

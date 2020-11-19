@@ -175,7 +175,7 @@ class WormKeypointDataset:
 
         return(scale_keypoint0_maps, scale_keypoint1_maps, scale_keypoint2_maps, scale_keypoint3_maps)
 
-class GaussianKpMap:
+class GaussianKpMap2D:
     def __init__(self, covariate=100, max_val=100):
         self.covariate = covariate
         self.max_val = max_val
@@ -193,6 +193,32 @@ class GaussianKpMap:
             xidx, yidx = numpy.indices(worm_frame_shape)
             points = numpy.stack((xidx, yidx), axis=-1)
             pdf = stats.multivariate_normal.pdf(points, (x,y), covariate) #make gaussian pdf centered at x,y
+            #kp_image = numpy.ones(worm_frame_shape)*pdf
+            #scale image to make training easier
+            kp_image = pdf/pdf.max() #get everything into the range 0,1
+            kp_image *= max_val #to scale things to make loss better when training
+            keypoint_maps.append(kp_image.astype(numpy.float32))
+
+        return keypoint_maps
+
+class GaussianKpMap1D:
+    def __init__(self, covariate=100, max_val=100):
+        self.covariate = covariate
+        self.max_val = max_val
+
+    def __call__(self, keypoint_coords, worm_frame_shape):
+        covariate = self.covariate
+        max_val = self.max_val
+
+        #step 1: get the x,y positions in the new image shape
+        xs, ys = keypoint_coords
+
+        #step 2: make the gaussian hotspot over the x,y positions of the images
+        keypoint_maps = []
+        for x,y in zip(xs, ys):
+            xidx, yidx = numpy.indices(worm_frame_shape)
+            dev = numpy.sqrt(covariate) #scale is the std deviation, so need to take the sqrt of variance
+            pdf = stats.norm.pdf(xidx, loc=x, scale=dev) #make 1D gaussian pdf centered at x with variance covariate 
             #kp_image = numpy.ones(worm_frame_shape)*pdf
             #scale image to make training easier
             kp_image = pdf/pdf.max() #get everything into the range 0,1

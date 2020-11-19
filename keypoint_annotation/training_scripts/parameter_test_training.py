@@ -6,7 +6,7 @@ from keypoint_annotation.training_scripts import gaussian_training_script
 from keypoint_annotation.training_scripts import vulva_classifier_script
 from keypoint_annotation.training_scripts import sigmoid_training_script
 
-def parameter_test(sigmoid=False):
+def parameter_test(sigmoid=False, dim1D=False):
     if sigmoid:
         cov_par =[0.01,  0.5,  1,  10]
     else:
@@ -35,14 +35,19 @@ def parameter_test(sigmoid=False):
         if sigmoid:
             save_dir = sigmoid_training_script.train_model(covariate, max_val, downscale, image_shape, mask_error, epochs)
         else:
-            save_dir = gaussian_training_script.train_model(covariate, max_val, downscale, image_shape, mask_error, epochs)
+            save_dir = gaussian_training_script.train_model(covariate, max_val, downscale, image_shape, mask_error, epochs, dim1D)
         vulva_classifier_script.train_vulva(save_dir, downscale, image_shape)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--sigmoid', default=False, action='store_true')
+    parser.add_argument('--dim1D', default=False, action='store_true')
     args = parser.parse_args()
+    
     if args.sigmoid:
         parameter_test(sigmoid=True)
     else:
-        parameter_test(sigmoid=False)
+        if args.dim1D:
+            parameter_test(sigmoid=False, dim1D=True)
+        else:
+            parameter_test(sigmoid=False, dim1D=False)
