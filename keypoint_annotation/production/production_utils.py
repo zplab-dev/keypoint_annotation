@@ -157,7 +157,7 @@ def normalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_size=
     length = spline_geometry.arc_length(center_tck)
     sample_dist = interpolate.spline_interpolate(width_tck, length).max()+20
     if pred_keypoints is None:
-        print("Keypoints do not exist with id: ", pred_id)
+        print("pred_keypoints is None")
         return None
     new_keypoints = {}
     for kp, points in pred_keypoints.items():
