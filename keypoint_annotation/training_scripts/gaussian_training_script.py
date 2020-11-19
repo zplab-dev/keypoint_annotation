@@ -18,7 +18,7 @@ from keypoint_annotation.dataloaders import training_dataloaders
 from keypoint_annotation.production import worm_datasets
 
 
-def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False):
+def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, total_epoch_num=25, dim1D=False):
     ##Load in Data
     os_type = platform.system()
     print(os_type)
@@ -34,11 +34,16 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
         test = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_linux.txt')
         print(len(train), len(val), len(test))
 
+        """train = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/train_path_linux.txt')
+        val = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/val_path_linux.txt')
+        test = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/test_path_linux.txt')
+        print(len(train), len(val), len(test))"""
+
     #model parameters
     sets = ['train', 'val']
     scale = [0,1,2,3]      # the number of output layer for U-net
     batch_size = 5
-    total_epoch_num = 25 # total number of epoch in training
+    total_epoch_num = total_epoch_num # total number of epoch in training
     base_lr = 0.0005      # base learning rate/
     #downscale = 1
     #image_shape = (960,96)
@@ -51,7 +56,10 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
     device ='cpu'
     if torch.cuda.is_available(): device='cuda:0'
 
-    kp_map_generator = training_dataloaders.GaussianKpMap(covariate=covariate, max_val=max_val)
+    if dim1D:
+        kp_map_generator = training_dataloaders.GaussianKpMap1D(covariate=covariate, max_val=max_val)
+    else:
+        kp_map_generator = training_dataloaders.GaussianKpMap2D(covariate=covariate, max_val=max_val)
     data_generator = training_dataloaders.WormKeypointDataset(kp_map_generator,downscale=downscale, scale=scale, image_size=image_shape)
 
     datasets = {'train': dataset.WormDataset(train, data_generator),
@@ -71,9 +79,16 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
         project_name += '_mask'
     #save_dir = './'+project_name
     if os_type == 'Darwin':
-        save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/'+project_name
+        if dim1D:
+            save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/1D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name+project_name
+        else:
+            save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/2D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name+project_name
+
     elif os_type == 'Linux':
-        save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/'+project_name
+        if dim1D:
+            save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/1D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name+project_name
+        else:
+            save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/gaussian_kp/2D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name+project_name
 
     if not os.path.exists(save_dir): os.makedirs(save_dir)
     log_filename = os.path.join(save_dir, 'train.log')

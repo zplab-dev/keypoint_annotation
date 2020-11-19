@@ -88,10 +88,10 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
     fn.write('\n\n\n')
     fn.close()
 
-    """#save predictions
-                for experiment in experiments:
-                    experiment.write_to_disk()"""
-
+    #save predictions
+    experiments = set([tp.position.experiment for tp in test])
+    for experiment in experiments:
+        experiment.write_to_disk() 
 
 if __name__ == "__main__":
     os_type = platform.system()

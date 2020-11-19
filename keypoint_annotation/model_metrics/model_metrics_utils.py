@@ -232,24 +232,31 @@ def sort_tp_list_by_error(tp_list, kp_idx, pred_id = 'pred keypoints'):
     keypoint_list = ['anterior bulb','posterior bulb','vulva','tail', 'vulva class']
 
     def get_kp_accuracy(timepoint, keypoint=keypoint_list[kp_idx], pred_id= pred_id):
-        gt_kp = timepoint.annotations.get('keypoints', None)
-        pose = timepoint.annotations.get('pose', None)
-        pred_kp = timepoint.annotations.get(pred_id)
-        dist = 0
-        if gt_kp is None or pred_kp is None or None in gt_kp.values() or None in pred_kp.values():
-            print("None found in keypoint")
-            return
-        elif False in [x in list(gt_kp.keys()) for x in ['anterior bulb','posterior bulb','vulva','tail']]: 
-            return
-        else:
-            gtx, gty = gt_kp[keypoint]
-            px, py = pred_kp[keypoint]
-            if keypoint == 'vulva class':
-                dist = ((gty* py) >= 0) #test sign
-            else:
-                dist = gtx-px
-        print(timepoint.position.experiment.name,timepoint.position.name, timepoint.name, dist)
-                
-        return abs(dist)
+        acc = get_tp_accuracy(timepoint, pred_id)
+        try:
+            dist = acc[keypoint]
+        except TypeError:
+            return 0
 
-    return sorted(test, key=get_kp_accuracy, reverse=True)
+        return abs(dist)
+        """gt_kp = timepoint.annotations.get('keypoints', None)
+                                pose = timepoint.annotations.get('pose', None)
+                                pred_kp = timepoint.annotations.get(pred_id)
+                                dist = 0
+                                if gt_kp is None or pred_kp is None or None in gt_kp.values() or None in pred_kp.values():
+                                    print("None found in keypoint")
+                                    return 0
+                                elif False in [x in list(gt_kp.keys()) for x in ['anterior bulb','posterior bulb','vulva','tail']]: 
+                                    return
+                                else:
+                                    gtx, gty = gt_kp[keypoint]
+                                    px, py = pred_kp[keypoint]
+                                    if keypoint == 'vulva class':
+                                        dist = ((gty* py) >= 0) #test sign
+                                    else:
+                                        dist = gtx-px
+                                print(timepoint.position.experiment.name,timepoint.position.name, timepoint.name, dist)
+                                        
+                                return abs(dist)"""
+
+    return sorted(tp_list, key=get_kp_accuracy, reverse=True)

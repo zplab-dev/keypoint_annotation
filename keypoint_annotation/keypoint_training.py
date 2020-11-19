@@ -77,6 +77,7 @@ def training_wrapper(dataloaders, dataset_sizes, loss_1_to_2, base_lr = 0.0001 ,
 
     log_filename = os.path.join(work_dir,'train.log')    
     for i, keypoint in enumerate(['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']):
+    #for i, keypoint in enumerate(['post_pharynx', 'vulva_kp']):
         since = time.time()
         curr_time = datetime.now()
         print('------------------------{} Training {} ------------------------'.format(curr_time, keypoint))
