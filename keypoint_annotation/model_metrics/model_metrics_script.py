@@ -1,4 +1,5 @@
 import os
+import re
 import platform
 import sys
 from torch.utils import data
@@ -19,7 +20,7 @@ from keypoint_annotation.model_metrics import model_metrics_new_api
 from keypoint_annotation.model_metrics import model_metrics_utils
 from keypoint_annotation.production import production_utils
 
-def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, sigmoid=False):
+def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, sigmoid=False, dim1D=False):
     os_type = platform.system()
     print(os_type)
 
@@ -34,12 +35,20 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
         test = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_linux.txt')
         print(len(train), len(val), len(test))
 
-    
-
     device ='cpu'
     if torch.cuda.is_available(): device='cuda:0'
     image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
-    pred_id = 'pred keypoints {}x{}_cov{}_max{}_test'.format(image_size[0], image_size[1], covariate, max_val)
+    if sigmoid:
+        pred_id = 'pred keypoints {}x{}_slope{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+    elif dim1D:
+        pred_id = 'pred keypoints {}x{}_cov{}_max{}_dim1D'.format(image_size[0], image_size[1], covariate, max_val)
+    else:
+        pred_id = 'pred keypoints {}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+    
+    if 'epochs' in model_path_root:
+        m = re.search("\w+epochs", model_path_root)
+        epoch_num = m.group()
+        pred_id+='_'+epoch_num
     if mask_error:
         pred_id+='_mask'
 
