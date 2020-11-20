@@ -22,7 +22,7 @@ def parameter_test(sigmoid=False, dim1D=False):
     mask_error = False
     epochs = 25
 
-    for covariate, max_val in itertools.product(slope, val_par):
+    for covariate, max_val in itertools.product(cov_par, val_par):
         print("Training with covariate {}, max_val {}".format(covariate, max_val))
         image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
         if sigmoid:
