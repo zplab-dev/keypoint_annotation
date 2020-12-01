@@ -119,8 +119,7 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
     fn.write('work_dir: {}\n'.format(save_dir))
     fn.close()
 
-    keypoint_training.training_wrapper(dataloaders, dataset_sizes, loss, 
-        start_epo=ep_time, base_lr=base_lr, total_epoch_nums=total_epoch_num, work_dir=save_dir, device=device)
+    keypoint_training.training_wrapper(dataloaders, dataset_sizes, loss, start_epo=ep_time, base_lr=base_lr, total_epoch_nums=total_epoch_num, work_dir=save_dir, device=device)
 
     return save_dir
 
