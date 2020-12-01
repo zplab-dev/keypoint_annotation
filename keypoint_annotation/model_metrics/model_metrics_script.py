@@ -75,7 +75,7 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
 
     #model_metrics_utils.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
     limited = False
-    if epochs>=150:
+    if int(epoch_num)>=150:
         limited = True
 
     for timepoint in test:
