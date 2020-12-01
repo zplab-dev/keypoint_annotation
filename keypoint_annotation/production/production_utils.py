@@ -121,7 +121,7 @@ def renormalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_siz
     center_tck, width_tck = timepoint.annotations['pose']
     image_shape = (image_size[0]/downscale, image_size[1]/downscale)
     length = spline_geometry.arc_length(center_tck)
-    sample_dist = interpolate.spline_interpolate(width_tck, length).max()+20
+    sample_dist = interpolate.spline_interpolate(width_tck, int(length)).max()+20
     width = int(round(sample_dist*2))
     new_keypoints = {}
     for kp, points in pred_keypoints.items():
