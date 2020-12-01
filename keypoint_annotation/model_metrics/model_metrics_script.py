@@ -66,10 +66,11 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
     fn.write('Model Paths: \n')
     for k, p in model_paths.items():
         fn.write('\t{}: {}\n'.format(k,p))
+    fn.write("pred_id: {}".format(pred_id))
     fn.close()
 
     #model_metrics_utils.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
-
+    
     for timepoint in test:
             model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
             model_metrics_utils.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape, sigmoid)
