@@ -7,7 +7,7 @@ from keypoint_annotation.training_scripts import vulva_classifier_script
 from keypoint_annotation.training_scripts import sigmoid_training_script
 
 
-def parameter_test(sigmoid=False, dim1D=False, epochs=25):
+def parameter_test(sigmoid=False, dim1D=False):
     if sigmoid:
         cov_par =[0.01,  0.5,  1,  10]
     else:
@@ -20,7 +20,7 @@ def parameter_test(sigmoid=False, dim1D=False, epochs=25):
     downscale = 1
     image_shape = (960,96)
     mask_error = False
-    epochs = epochs
+    epochs = 25
 
     for covariate, max_val in itertools.product(cov_par, val_par):
         print("Training with covariate {}, max_val {}".format(covariate, max_val))
@@ -42,14 +42,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--sigmoid', default=False, action='store_true')
     parser.add_argument('--dim1D', default=False, action='store_true')
-    parser.add_argument('--epochs', type=int, default=25)
     args = parser.parse_args()
-    epochs = args.epochs
-
+    
     if args.sigmoid:
-        parameter_test(sigmoid=True, epochs=epochs)
+        parameter_test(sigmoid=True)
     else:
         if args.dim1D:
-            parameter_test(sigmoid=False, dim1D=True, epochs=epochs)
+            parameter_test(sigmoid=False, dim1D=True)
         else:
-            parameter_test(sigmoid=False, dim1D=False, epochs=epochs)
+            parameter_test(sigmoid=False, dim1D=False)
