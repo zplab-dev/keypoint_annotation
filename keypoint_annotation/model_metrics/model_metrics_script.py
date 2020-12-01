@@ -65,7 +65,7 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
                  'tail':model_path_root+'/tail/bestValModel.paramOnly'}
 
     log_filename = os.path.join(model_path_root,'model_metrics.log')
-    fn = open(log_filename,'a')
+    fn = open(log_filename,'a+')
     time = datetime.now()
     fn.write('---------------- Model metrics run on {} ---------------------\n'.format(time))
     fn.write('Model Paths: \n')
