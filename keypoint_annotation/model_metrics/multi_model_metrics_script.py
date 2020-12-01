@@ -21,7 +21,7 @@ def multi_model_metrics(sigmoid=False, dim1D=False, epochs=None):
 
     #model parameters
     if sigmoid:
-        cov_par =[0.01,  0.5,  1,  10]
+        cov_par =[0.01, 0.25, 0.5,  1,  10]
     else:
         cov_par = [25, 50, 100, 200]
     
