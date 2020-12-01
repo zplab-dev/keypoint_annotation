@@ -12,12 +12,10 @@ def multi_model_metrics(sigmoid=False, dim1D=False, epochs=None):
 
     if sigmoid:
             model_path_root += 'sigmoid_kp/'
+    elif dim1D:
+        model_path_root+='1D_gaussian/'
     else:
-        model_path_root += 'gaussian_kp/'
-        if dim1D:
-            model_path_root+='1D_gaussian/'
-        else:
-            model_path_root+='2D_gaussian/'
+        model_path_root+='2D_gaussian/'
 
     #model parameters
     if sigmoid:
