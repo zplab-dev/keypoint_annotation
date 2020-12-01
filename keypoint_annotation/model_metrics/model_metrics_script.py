@@ -80,7 +80,7 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
             model_metrics_utils.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape, sigmoid)
 
     #output data:
-    fn = open(log_filename, 'a')
+    fn = open(log_filename, 'a+')
     fn.write('Accuracy Metrics: \n')
     dist = model_metrics_utils.get_accuracy_tplist(test, pred_id=pred_id)
     for key, acc in dist.items():
