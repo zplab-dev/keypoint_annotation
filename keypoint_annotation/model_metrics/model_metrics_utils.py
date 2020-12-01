@@ -62,7 +62,7 @@ def predict_position(position, pred_id = 'pred keypoints test', model_paths= {'a
 
 def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
         'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
-        downscale=2, image_shape=(960,512), sigmoid=False):
+        downscale=2, image_shape=(960,512), sigmoid=False, limited=False):
     
     #get worm-frame image
     worm_frame_image = production_utils.get_worm_frame_image(timepoint, downscale, image_shape, reflect=False)
@@ -72,14 +72,14 @@ def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {
     extend_img = numpy.concatenate((worm_frame_image, worm_frame_image, worm_frame_image),axis=0)
     #predict image and renormalize keypoints to the original image size
     keypoints = timepoint.annotations['keypoints']
-    pred_keypoints = predict_image(extend_img, keypoints, downscale, model_paths, sigmoid)
+    pred_keypoints = predict_image(extend_img, keypoints, downscale, model_paths, sigmoid, limited)
     
     keypoint_dict = production_utils.renormalize_pred_keypoints(timepoint, pred_keypoints, downscale, image_shape)
     timepoint.annotations[pred_id] = keypoint_dict
     return keypoint_dict
 
 def predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
-        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, sigmoid=False):
+        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, sigmoid=False, limited=False):
     keypoint_dict = {}
     #identify dorsal, ventral first
     regModel = keypoint_annotation_model.init_vuvla_class_model()
@@ -95,7 +95,14 @@ def predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./
     #print(tensor_img.size())
     print("true vulva: ", keypoints['vulva'][1], "    vulva out: ", out, vulva_out)
 
-    for kp, model_kp in zip(['anterior bulb', 'posterior bulb', 'vulva', 'tail'], ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']):
+    kp_list = ['anterior bulb', 'posterior bulb', 'vulva', 'tail']
+    models_list = ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']
+    
+    if limited:
+        kp_list = ['posterior bulb', 'vulva']
+        models_list = ['post_pharynx', 'vulva_kp']
+
+    for kp, model_kp in zip(kp_list, models_list):
         #load model
         #print("Loading model: ", model_paths[model_kp])
         regModel = keypoint_annotation_model.WormRegModel(34, SCALE, pretrained=True)
@@ -116,7 +123,7 @@ def predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./
 ### Worst case prediction
 def predict_worst_timepoint(timepoint, pred_id = 'worst case keypoints', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
         'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
-        downscale=2, image_shape=(960,512), sigmoid=False):
+        downscale=2, image_shape=(960,512), sigmoid=False, limited=False):
     
     #get worm-frame image
     #flip everything so that the vulva will be on the wrong side every time
@@ -126,7 +133,7 @@ def predict_worst_timepoint(timepoint, pred_id = 'worst case keypoints', model_p
     #extend_img = numpy.concatenate((worm_frame_image, worm_frame_image, worm_frame_image),axis=0)
     #predict image and renormalize keypoints to the original image size
     keypoints = timepoint.annotations['keypoints']
-    pred_keypoints = predict_image(extend_img, keypoints, downscale, model_paths, sigmoid)
+    pred_keypoints = predict_image(extend_img, keypoints, downscale, model_paths, sigmoid, limited)
     
     keypoint_dict = production_utils.renormalize_pred_keypoints(timepoint, pred_keypoints, downscale, image_shape)
     timepoint.annotations[pred_id] = keypoint_dict
