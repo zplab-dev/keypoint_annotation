@@ -34,15 +34,11 @@ def train_vulva(root_dir, downscale=1, image_shape=(960,96)):
         test = datamodel.Timepoints.from_file('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_os.txt')
         print(len(train), len(val), len(test))
     elif os_type == 'Linux':
-        train = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/train_path_linux.txt')
-        val = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/val_path_linux.txt')
-        test = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_linux.txt')
-        print(len(train), len(val), len(test))
 
-        """train = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/train_path_linux.txt')
-                                val = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/val_path_linux.txt')
-                                test = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/test_path_linux.txt')
-                                print(len(train), len(val), len(test))"""
+        train = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/train_path_linux.txt')
+        val = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/val_path_linux.txt')
+        test = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/test_path_linux.txt')
+        print(len(train), len(val), len(test))
 
     #model parameters
     sets = ['train', 'val']
