@@ -174,7 +174,7 @@ class WormKeypointDataset:
             scale_keypoint2_maps.append(xkp2.astype(numpy.float32))
             scale_keypoint3_maps.append(xkp3.astype(numpy.float32))
 
-        if limited:
+        if self.limited:
             return(scale_keypoint1_maps, scale_keypoint2_maps)
         else:
             return(scale_keypoint0_maps, scale_keypoint1_maps, scale_keypoint2_maps, scale_keypoint3_maps)
