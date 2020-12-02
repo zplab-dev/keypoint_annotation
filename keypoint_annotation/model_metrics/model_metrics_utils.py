@@ -140,15 +140,19 @@ def predict_worst_timepoint(timepoint, pred_id = 'worst case keypoints', model_p
     return keypoint_dict
 
 ######### Analytics functions ##########
-def get_tp_accuracy(timepoint, pred_id='pred keypoints test'):
+def get_tp_accuracy(timepoint, pred_id='pred keypoints test', limited=False):
     dist = {}
     gt_kp = timepoint.annotations.get('keypoints', None)
     pose = timepoint.annotations.get('pose', None)
     pred_kp = timepoint.annotations.get(pred_id)
+
+    kp_list = ['anterior bulb','posterior bulb','vulva','tail']
+    if limited:
+        kp_list = ['posterior bulb','vulva']
     if gt_kp is None or pred_kp is None or None in gt_kp.values() or None in pred_kp.values():
         print("None found in keypoint")
         return
-    elif False in [x in list(gt_kp.keys()) for x in ['anterior bulb','posterior bulb','vulva','tail']]: 
+    elif False in [x in list(gt_kp.keys()) for x in kp_list]: 
         return
     else:
         for key in pred_kp.keys():
@@ -163,10 +167,10 @@ def get_tp_accuracy(timepoint, pred_id='pred keypoints test'):
 
     return dist
 
-def get_accuracy_tplist(timepoint_list, pred_id='pred keypoints test'):
+def get_accuracy_tplist(timepoint_list, pred_id='pred keypoints test', limited=False):
     dist = {'anterior bulb':[], 'posterior bulb':[], 'vulva':[],'vulva class':[], 'tail':[], 'age':[]}
     for timepoint in timepoint_list:
-        acc = get_tp_accuracy(timepoint, pred_id)
+        acc = get_tp_accuracy(timepoint, pred_id, limited)
         age = calculate_tp_age(timepoint)
         #print(acc.keys())
         for kp in acc.keys():

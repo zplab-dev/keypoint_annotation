@@ -13,7 +13,7 @@ from elegant import worm_spline
 from elegant import datamodel
 
 class WormKeypointDataset:
-    def __init__(self, generate_data, downscale=2, scale=(0,1,2,3), image_size=(960,512)):
+    def __init__(self, generate_data, downscale=2, scale=(0,1,2,3), image_size=(960,512), limited=False):
         """Callable class to generate a worm frame image and scaled keypoint maps to be used in training the keypoint CNN.
 
         Parameters:
@@ -30,6 +30,7 @@ class WormKeypointDataset:
         """
         self.generate_keypoint_maps = generate_data
         self.downscale = downscale
+        self.limited = limited
 
         with pkg_resources.resource_stream('elegant', 'width_data/width_trends.pickle') as f:
             trend_data = pickle.load(f)
@@ -173,7 +174,10 @@ class WormKeypointDataset:
             scale_keypoint2_maps.append(xkp2.astype(numpy.float32))
             scale_keypoint3_maps.append(xkp3.astype(numpy.float32))
 
-        return(scale_keypoint0_maps, scale_keypoint1_maps, scale_keypoint2_maps, scale_keypoint3_maps)
+        if limited:
+            return(scale_keypoint1_maps, scale_keypoint2_maps)
+        else:
+            return(scale_keypoint0_maps, scale_keypoint1_maps, scale_keypoint2_maps, scale_keypoint3_maps)
 
 class GaussianKpMap2D:
     def __init__(self, covariate=100, max_val=100):

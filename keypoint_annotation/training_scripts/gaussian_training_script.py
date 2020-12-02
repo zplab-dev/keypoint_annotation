@@ -52,6 +52,10 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
     #mask_error = False
     image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
 
+    limited=False
+    if total_epoch_num>=150:
+        limited=True
+
     # cpu or cuda
     device ='cpu'
     if torch.cuda.is_available(): device='cuda:0'
@@ -60,7 +64,7 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
         kp_map_generator = training_dataloaders.GaussianKpMap1D(covariate=covariate, max_val=max_val)
     else:
         kp_map_generator = training_dataloaders.GaussianKpMap2D(covariate=covariate, max_val=max_val)
-    data_generator = training_dataloaders.WormKeypointDataset(kp_map_generator,downscale=downscale, scale=scale, image_size=image_shape)
+    data_generator = training_dataloaders.WormKeypointDataset(kp_map_generator,downscale=downscale, scale=scale, image_size=image_shape, limited=limited)
 
     datasets = {'train': dataset.WormDataset(train, data_generator),
              'val': dataset.WormDataset(val, data_generator),
@@ -119,7 +123,7 @@ def train_model(covariate, max_val, downscale=1, image_shape=(960,96), mask_erro
     fn.write('work_dir: {}\n'.format(save_dir))
     fn.close()
 
-    keypoint_training.training_wrapper(dataloaders, dataset_sizes, loss, start_epo=ep_time, base_lr=base_lr, total_epoch_nums=total_epoch_num, work_dir=save_dir, device=device)
+    keypoint_training.training_wrapper(dataloaders, dataset_sizes, loss, start_epo=ep_time, base_lr=base_lr, total_epoch_nums=total_epoch_num, work_dir=save_dir, device=device, limited=limited)
 
     return save_dir
 
