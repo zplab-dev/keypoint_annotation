@@ -86,7 +86,7 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
     #output data:
     fn = open(log_filename, 'a+')
     fn.write('Accuracy Metrics: \n')
-    dist = model_metrics_utils.get_accuracy_tplist(test, pred_id=pred_id)
+    dist = model_metrics_utils.get_accuracy_tplist(test, pred_id=pred_id, limited=limited)
     for key, acc in dist.items():
         fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
 
