@@ -120,7 +120,7 @@ def renormalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_siz
     print('timepoint: ', timepoint.position.experiment.name, timepoint.position.name, timepoint.name)
     center_tck, width_tck = timepoint.annotations['pose']
     image_shape = (image_size[0]/downscale, image_size[1]/downscale)
-    length = spline_geometry.arc_length(center_tck)
+    length = spline_geometry.arc_length(center_tck).astype(int)
     sample_dist = interpolate.spline_interpolate(width_tck, length).max()+20
     width = int(round(sample_dist*2))
     new_keypoints = {}
@@ -182,7 +182,7 @@ def normalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_size=
     return new_keypoints
 
 def production_predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
-        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}):
+        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'},sigmoid=False, limited=False):
     
     keypoint_dict = {}
     #identify dorsal, ventral first
@@ -198,8 +198,13 @@ def production_predict_image(image, keypoints, downscale=2, model_paths= {'ant_p
                     tensor_img = torch.flip(tensor_img, [3])"""
     #print(tensor_img.size())
     print("true vulva: ", keypoints['vulva'][1], "    vulva out: ", out, vulva_out)
+    kp_list = ['anterior bulb', 'posterior bulb', 'vulva', 'tail']
+    model_kp_list = ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']
+    if limited:
+    	kp_list = ['posterior bulb', 'vulva']
+    	model_kp_list = ['post_pharynx', 'vulva_kp']
 
-    for kp, model_kp in zip(['anterior bulb', 'posterior bulb', 'vulva', 'tail'], ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']):
+    for kp, model_kp in zip(kp_list, model_kp_list):
         #load model
         #print("Loading model: ", model_paths[model_kp])
         regModel = keypoint_annotation_model.WormRegModel(34, SCALE, pretrained=True)
@@ -208,7 +213,7 @@ def production_predict_image(image, keypoints, downscale=2, model_paths= {'ant_p
 
         tensor_img = torch.tensor(image).unsqueeze(0)
         out = regModel(tensor_img)
-        pred_kp = process_reg_output(out, downscale)
+        pred_kp = process_output(out, downscal, sigmoid)
         if kp is 'vulva':
             #want to preserve what side the vulva is on.
             if vulva_out <=0:
@@ -219,15 +224,20 @@ def production_predict_image(image, keypoints, downscale=2, model_paths= {'ant_p
     return keypoint_dict
 
 def output_prediction_image(image, keypoints, model_paths={'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
-        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}):
+        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, limited=False):
     keypoint_maps = []
     tensor_img = torch.tensor(image).unsqueeze(0)
     #flip vulva 
     """if keypoints['vulva'][1] > 0:
                     tensor_img = torch.flip(tensor_img, [3])"""
     #print(tensor_img.size())
+    kp_list = ['anterior bulb', 'posterior bulb', 'vulva', 'tail']
+    model_kp_list = ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']
+    if limited:
+    	kp_list = ['posterior bulb', 'vulva']
+    	model_kp_list = ['post_pharynx', 'vulva_kp']
 
-    for kp, model_kp in zip(['anterior bulb', 'posterior bulb', 'vulva', 'tail'], ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']):
+    for kp, model_kp in zip(kp_list, model_kp_list):
         #load model
         #print("Loading model: ", model_paths[model_kp])
         regModel = keypoint_annotation_model.WormRegModel(34, SCALE, pretrained=True)

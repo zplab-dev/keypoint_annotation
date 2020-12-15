@@ -41,9 +41,9 @@ def train_model(slope, max_val, downscale=1, image_shape=(960,96), mask_error=Fa
         test = datamodel.Timepoints.from_file('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_os.txt')
         print(len(train), len(val), len(test))
     elif os_type == 'Linux':
-        train = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/train_path_linux.txt')
-        val = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/val_path_linux.txt')
-        test = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_linux.txt')
+        train = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/train_path_linux.txt')
+        val = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/val_path_linux.txt')
+        test = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/test_path_linux.txt')
         print(len(train), len(val), len(test))
 
     #model parameters
@@ -83,9 +83,9 @@ def train_model(slope, max_val, downscale=1, image_shape=(960,96), mask_error=Fa
         project_name += '_mask'
     #save_dir = './'+project_name
     if os_type == 'Darwin':
-        save_dir = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/sigmoid_kp/'+project_name
+        save_dir = '/Volumes/squidarray/Laird_Nicolette/keypoint_annotations/1D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name
     elif os_type == 'Linux':
-        save_dir = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/sigmoid_kp/'+str(total_epoch_num)+'_epochs/'+project_name
+        save_dir = '/mnt/squidarray/Laird_Nicolette/keypoint_annotations/1D_gaussian/'+str(total_epoch_num)+'_epochs/'+project_name
 
     if not os.path.exists(save_dir): os.makedirs(save_dir)
     log_filename = os.path.join(save_dir, 'train.log')

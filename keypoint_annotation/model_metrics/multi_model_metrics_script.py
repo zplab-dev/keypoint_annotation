@@ -6,18 +6,16 @@ from keypoint_annotation.model_metrics import model_metrics_script
 def multi_model_metrics(sigmoid=False, dim1D=False, epochs=None):
     os_type = platform.system()
     if os_type == 'Darwin':
-            model_path_root = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/'
+            model_path_root = '/Volumes/squidarray/Laird_Nicolette/keypoint_annotations/'
     else:
-        model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/'
+        model_path_root = '/mnt/squidarray/Laird_Nicolette/keypoint_annotations/'
 
     if sigmoid:
             model_path_root += 'sigmoid_kp/'
+    elif dim1D:
+        model_path_root+='1D_gaussian/'
     else:
-        model_path_root += 'gaussian_kp/'
-        if dim1D:
-            model_path_root+='1D_gaussian/'
-        else:
-            model_path_root+='2D_gaussian/'
+        model_path_root+='2D_gaussian/'
 
     #model parameters
     if sigmoid:

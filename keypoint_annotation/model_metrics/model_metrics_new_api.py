@@ -379,7 +379,7 @@ def output_prediction_image(image, keypoints, model_paths={'ant_pharynx':"./mode
 
 
 ######### Analytics functions ##########
-def get_tp_accuracy(timepoint, pred_id='pred keypoints test'):
+def get_tp_accuracy(timepoint, pred_id='pred keypoints test', limited=False):
     dist = {}
     gt_kp = timepoint.annotations.get('keypoints', None)
     pose = timepoint.annotations.get('pose', None)

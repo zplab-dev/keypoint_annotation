@@ -3,8 +3,11 @@ import freeimage
 import numpy
 import pickle
 import torch
+import pathlib
 
 from scipy.ndimage import gaussian_filter
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 
 from torch.utils import data
 from zplib.image import colorize
@@ -62,7 +65,7 @@ def predict_position(position, pred_id = 'pred keypoints test', model_paths= {'a
 
 def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
         'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
-        downscale=2, image_shape=(960,512), sigmoid=False):
+        downscale=2, image_shape=(960,512), sigmoid=False, limited=False):
     
     #get worm-frame image
     worm_frame_image = production_utils.get_worm_frame_image(timepoint, downscale, image_shape, reflect=False)
@@ -72,14 +75,14 @@ def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {
     extend_img = numpy.concatenate((worm_frame_image, worm_frame_image, worm_frame_image),axis=0)
     #predict image and renormalize keypoints to the original image size
     keypoints = timepoint.annotations['keypoints']
-    pred_keypoints = predict_image(extend_img, keypoints, downscale, model_paths, sigmoid)
+    pred_keypoints = predict_image(extend_img, keypoints, downscale, model_paths, sigmoid, limited)
     
     keypoint_dict = production_utils.renormalize_pred_keypoints(timepoint, pred_keypoints, downscale, image_shape)
     timepoint.annotations[pred_id] = keypoint_dict
     return keypoint_dict
 
 def predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
-        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, sigmoid=False):
+        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, sigmoid=False, limited=False):
     keypoint_dict = {}
     #identify dorsal, ventral first
     regModel = keypoint_annotation_model.init_vuvla_class_model()
@@ -95,7 +98,14 @@ def predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./
     #print(tensor_img.size())
     print("true vulva: ", keypoints['vulva'][1], "    vulva out: ", out, vulva_out)
 
-    for kp, model_kp in zip(['anterior bulb', 'posterior bulb', 'vulva', 'tail'], ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']):
+    kp_list = ['anterior bulb', 'posterior bulb', 'vulva', 'tail']
+    models_list = ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']
+    
+    if limited:
+        kp_list = ['posterior bulb', 'vulva']
+        models_list = ['post_pharynx', 'vulva_kp']
+
+    for kp, model_kp in zip(kp_list, models_list):
         #load model
         #print("Loading model: ", model_paths[model_kp])
         regModel = keypoint_annotation_model.WormRegModel(34, SCALE, pretrained=True)
@@ -116,7 +126,7 @@ def predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./
 ### Worst case prediction
 def predict_worst_timepoint(timepoint, pred_id = 'worst case keypoints', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
         'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
-        downscale=2, image_shape=(960,512), sigmoid=False):
+        downscale=2, image_shape=(960,512), sigmoid=False, limited=False):
     
     #get worm-frame image
     #flip everything so that the vulva will be on the wrong side every time
@@ -126,22 +136,26 @@ def predict_worst_timepoint(timepoint, pred_id = 'worst case keypoints', model_p
     #extend_img = numpy.concatenate((worm_frame_image, worm_frame_image, worm_frame_image),axis=0)
     #predict image and renormalize keypoints to the original image size
     keypoints = timepoint.annotations['keypoints']
-    pred_keypoints = predict_image(extend_img, keypoints, downscale, model_paths, sigmoid)
+    pred_keypoints = predict_image(extend_img, keypoints, downscale, model_paths, sigmoid, limited)
     
     keypoint_dict = production_utils.renormalize_pred_keypoints(timepoint, pred_keypoints, downscale, image_shape)
     timepoint.annotations[pred_id] = keypoint_dict
     return keypoint_dict
 
 ######### Analytics functions ##########
-def get_tp_accuracy(timepoint, pred_id='pred keypoints test'):
+def get_tp_accuracy(timepoint, pred_id='pred keypoints test', limited=False):
     dist = {}
     gt_kp = timepoint.annotations.get('keypoints', None)
     pose = timepoint.annotations.get('pose', None)
     pred_kp = timepoint.annotations.get(pred_id)
+
+    kp_list = ['anterior bulb','posterior bulb','vulva','tail']
+    if limited:
+        kp_list = ['posterior bulb','vulva']
     if gt_kp is None or pred_kp is None or None in gt_kp.values() or None in pred_kp.values():
         print("None found in keypoint")
         return
-    elif False in [x in list(gt_kp.keys()) for x in ['anterior bulb','posterior bulb','vulva','tail']]: 
+    elif False in [x in list(gt_kp.keys()) for x in kp_list]: 
         return
     else:
         for key in pred_kp.keys():
@@ -156,10 +170,10 @@ def get_tp_accuracy(timepoint, pred_id='pred keypoints test'):
 
     return dist
 
-def get_accuracy_tplist(timepoint_list, pred_id='pred keypoints test'):
+def get_accuracy_tplist(timepoint_list, pred_id='pred keypoints test', limited=False):
     dist = {'anterior bulb':[], 'posterior bulb':[], 'vulva':[],'vulva class':[], 'tail':[], 'age':[]}
     for timepoint in timepoint_list:
-        acc = get_tp_accuracy(timepoint, pred_id)
+        acc = get_tp_accuracy(timepoint, pred_id, limited)
         age = calculate_tp_age(timepoint)
         #print(acc.keys())
         for kp in acc.keys():
@@ -200,7 +214,7 @@ def get_accuracy(experiment, pred_id='pred keypoints test'):
                         dist[key] = dist[key]+[gtx-px]
             print("dist len: ",len(dist['vulva']))
 
-    error = {key: np.mean(abs(np.array(vals))) for key, vals in dist.items()}
+    error = {key: numpy.mean(abs(numpy.array(vals))) for key, vals in dist.items()}
     return dist, error
 
 def calculate_tp_age(timepoint):
@@ -238,25 +252,149 @@ def sort_tp_list_by_error(tp_list, kp_idx, pred_id = 'pred keypoints'):
         except TypeError:
             return 0
 
+        gt_kp = timepoint.annotations.get('keypoints', None)
+        pose = timepoint.annotations.get('pose', None)
+        pred_kp = timepoint.annotations.get(pred_id)
+        dist = 0
+        if gt_kp is None or pred_kp is None or None in gt_kp.values() or None in pred_kp.values():
+            print("None found in keypoint")
+            return 0
+        elif False in [x in list(gt_kp.keys()) for x in ['anterior bulb','posterior bulb','vulva','tail']]: 
+            return
+        else:
+            gtx, gty = gt_kp[keypoint]
+            px, py = pred_kp[keypoint]
+            if keypoint == 'vulva class':
+                dist = ((gty* py) >= 0) #test sign
+            else:
+                dist = gtx-px
+        print(timepoint.position.experiment.name,timepoint.position.name, timepoint.name, dist)
+                
         return abs(dist)
-        """gt_kp = timepoint.annotations.get('keypoints', None)
-                                pose = timepoint.annotations.get('pose', None)
-                                pred_kp = timepoint.annotations.get(pred_id)
-                                dist = 0
-                                if gt_kp is None or pred_kp is None or None in gt_kp.values() or None in pred_kp.values():
-                                    print("None found in keypoint")
-                                    return 0
-                                elif False in [x in list(gt_kp.keys()) for x in ['anterior bulb','posterior bulb','vulva','tail']]: 
-                                    return
-                                else:
-                                    gtx, gty = gt_kp[keypoint]
-                                    px, py = pred_kp[keypoint]
-                                    if keypoint == 'vulva class':
-                                        dist = ((gty* py) >= 0) #test sign
-                                    else:
-                                        dist = gtx-px
-                                print(timepoint.position.experiment.name,timepoint.position.name, timepoint.name, dist)
-                                        
-                                return abs(dist)"""
 
     return sorted(tp_list, key=get_kp_accuracy, reverse=True)
+
+def get_percent_keypoint(timepoint, pred_keypoints):
+    center_tck, width_tck = timepoint.annotations['pose']
+    length = spline_geometry.arc_length(center_tck)
+    sample_dist = interpolate.spline_interpolate(width_tck, length).max()+20
+    if pred_keypoints is None:
+        print("pred_keypoints is None")
+        return None
+    new_keypoints = {}
+    for kp, points in pred_keypoints.items():
+        x,y = points
+        x_percent = x/length
+        
+        new_keypoints[kp] = (x_percent)
+
+    return new_keypoints
+
+def get_avg_keypoint_percent(tp_list, pred_id):
+    kps = ['anterior bulb', 'posterior bulb', 'vulva', 'tail']
+    kp_list = {'anterior bulb':[], 'posterior bulb':[], 'vulva':[], 'tail':[]}
+    avg_kp = {}
+    for tp in tp_list:
+        try:
+            keypoints = tp.annotations[pred_id]
+        except KeyError:
+            continue
+        normalized_keypoints = get_percent_keypoint(tp, keypoints)
+        for kp in kps:
+            kp_list[kp] += [normalized_keypoints[kp]]
+        for kp, vals in kp_list.items():
+            avg_kp[kp] = numpy.mean(numpy.array(vals), axis=0)
+        
+    return kp_list, avg_kp
+
+def tp_avg_kp(timepoint, avg_percent):
+    center_tck, width_tck = timepoint.annotations['pose']
+    length = spline_geometry.arc_length(center_tck)
+    sample_dist = interpolate.spline_interpolate(width_tck, length).max()+20
+    keypoints = timepoint.annotations['keypoints']
+    if keypoints is None:
+        print("keypoints is None")
+        return None
+    new_keypoints = {}
+    for kp, x_per in avg_percent.items():
+        x,y = keypoints[kp]
+        new_x = x_per*length
+        
+        new_keypoints[kp] = (new_x, y)
+
+    return new_keypoints
+
+########### Ploting functions #######################
+def add_label(violin, label):
+    color = violin['bodies'][0].get_facecolor().flatten()
+    return (mpatches.Patch(color=color), label)
+
+def plot_violin_plots(data, base_case, save_dir, keys=['cov25','cov50','cov100','cov200', 'base case'], kp_list=['anterior bulb', 'posterior bulb', 'vulva', 'tail']):
+    dists = data + base_case
+    kp_list = kp_list
+    keys = keys
+    save_dir = pathlib.Path(save_dir)
+    save_dir = save_dir / 'model_metrics'
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    abs_violin(dists, base_case, save_dir, keys, kp_list)
+    signed_violin(dists, base_case, save_dir, keys, kp_list)
+    
+
+def abs_violin(dists, base_case, save_dir, keys=['cov25','cov50','cov100','cov200', 'base case'], kp_list=['anterior bulb', 'posterior bulb', 'vulva', 'tail']):
+    dists = dists+base_case
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20,20))
+    pos = len(dists)
+    labels = []
+
+    for d_list, legend in zip(dists, keys):
+        for i in range(len(kp_list)):
+            kp = kp_list[i]
+            ax=int(i/2)
+            ay=i
+            if i>1:
+                ay=i-2
+            data=[abs(numpy.array(d_list[kp]))]
+            means = numpy.mean(data[0])
+            if i == 0:
+                label = add_label(axes[ax,ay].violinplot(data, [pos], vert=False, showmeans=True, showextrema=False), legend)
+                labels.append(label)
+            else:
+                axes[ax,ay].violinplot(data, [pos], vert=False, showmeans=True, showextrema=False)
+            axes[ax, ay].text(means, pos, str(numpy.round(means, 3)))
+            axes[ax,ay].set_title(kp)
+        pos-=1
+    plt.legend(*zip(*labels),loc='upper left', bbox_to_anchor=(1.05,1.05), borderaxespad=0)
+
+    save_name = save_dir / 'abs_error_violin.png'
+    plt.savefig(str(save_name),bbox_inches='tight')
+    #plt.close()
+
+def signed_violin(dists, base_case, save_dir, keys=['cov25','cov50','cov100','cov200', 'base case'], kp_list=['anterior bulb', 'posterior bulb', 'vulva', 'tail']):
+    dists = dists + base_case
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20,20))
+    pos = len(dists)
+    labels = []
+
+    for d_list, legend in zip(dists, keys):
+        for i in range(len(kp_list)):
+            kp = kp_list[i]
+            ax=int(i/2)
+            ay=i
+            if i>1:
+                ay=i-2
+            data=[numpy.array(d_list[kp])]
+            means = numpy.mean(data[0])
+            if i == 0:
+                label = add_label(axes[ax,ay].violinplot(data, [pos], vert=False, showmeans=True, showextrema=False), legend)
+                labels.append(label)
+            else:
+                axes[ax,ay].violinplot(data, [pos], vert=False, showmeans=True, showextrema=False)
+            axes[ax, ay].text(means, pos, str(numpy.round(means, 3)))
+            axes[ax,ay].set_title(kp)
+        pos-=1
+    plt.legend(*zip(*labels),loc='upper left', bbox_to_anchor=(1.05,1.05), borderaxespad=0)
+
+    save_name = save_dir / 'signed_error_violin.png'
+    plt.savefig(str(save_name),bbox_inches='tight')
+    #plt.close()

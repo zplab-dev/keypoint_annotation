@@ -30,9 +30,14 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
         test = datamodel.Timepoints.from_file('/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_os.txt')
         print(len(train), len(val), len(test))
     elif os_type == 'Linux':
-        train = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/train_path_linux.txt')
-        val = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/val_path_linux.txt')
-        test = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_linux.txt')
+        """train = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/train_path_linux.txt')
+                                val = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/val_path_linux.txt')
+                                test = datamodel.Timepoints.from_file('/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/training_paths/test_path_linux.txt')
+                                print(len(train), len(val), len(test))"""
+
+        train = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/train_path_linux.txt')
+        val = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/val_path_linux.txt')
+        test = datamodel.Timepoints.from_file('/mnt/squidarray/Laird_Nicolette/keypoint_annotations/training_paths/test_path_linux.txt')
         print(len(train), len(val), len(test))
 
     device ='cpu'
@@ -60,7 +65,7 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
                  'tail':model_path_root+'/tail/bestValModel.paramOnly'}
 
     log_filename = os.path.join(model_path_root,'model_metrics.log')
-    fn = open(log_filename,'a')
+    fn = open(log_filename,'a+')
     time = datetime.now()
     fn.write('---------------- Model metrics run on {} ---------------------\n'.format(time))
     fn.write('Model Paths: \n')
@@ -70,15 +75,19 @@ def run_model_metrics(model_path_root, covariate, max_val, downscale=1, image_sh
     fn.close()
 
     #model_metrics_utils.predict_timepoint_list(test, model_paths=model_paths, pred_id=pred_id, downscale=downscale, image_shape=image_shape)
-    
+    limited = False
+    epochs = epoch_num.split('_')[0]
+    if int(epochs)>=150:
+        limited = True
+
     for timepoint in test:
-            model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
-            model_metrics_utils.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape, sigmoid)
+            model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid, limited)
+            model_metrics_utils.predict_worst_timepoint(timepoint, 'worst case keypoints', model_paths, downscale, image_shape, sigmoid, limited)
 
     #output data:
-    fn = open(log_filename, 'a')
+    fn = open(log_filename, 'a+')
     fn.write('Accuracy Metrics: \n')
-    dist = model_metrics_utils.get_accuracy_tplist(test, pred_id=pred_id)
+    dist = model_metrics_utils.get_accuracy_tplist(test, pred_id=pred_id, limited=limited)
     for key, acc in dist.items():
         fn.write('{}: {}\n'.format(key,numpy.mean(abs(numpy.array(acc)))))
 
