@@ -26,3 +26,5 @@ keypoint_annotation/dataloaders/__pycache__/training_dataloaders.cpython-37.pyc
 keypoint_annotation/production/__pycache__/worm_datasets.cpython-37.pyc
 keypoint_annotation/production/__pycache__/worm_datasets.cpython-37.pyc
 keypoint_annotation/dataloaders/__pycache__/training_dataloaders.cpython-37.pyc
+keypoint_annotation/dataloaders/__pycache__/training_dataloaders.cpython-37.pyc
+keypoint_annotation/production/__pycache__/worm_datasets.cpython-37.pyc
