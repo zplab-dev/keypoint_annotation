@@ -8,8 +8,8 @@ from keypoint_annotation.production import production_utils
 from keypoint_annotation.model_metrics import model_metrics_utils
 
 def run_predictor(experiment, model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, sigmoid=False, dim1D=False):
-	device ='cpu'
-	if torch.cuda.is_available(): device='cuda:0'
+    device ='cpu'
+    if torch.cuda.is_available(): device='cuda:0'
     timepoint_list = datamodel.Timepoints.from_experiments(experiment) 
 
     device ='cpu'
@@ -66,10 +66,10 @@ if __name__ == "__main__":
     image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
     #project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
     if sigmoid:
-    	covariate = 1
-    	project_name = '{}x{}_slope{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+        covariate = 1
+        project_name = '{}x{}_slope{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
     else:
-    	project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+        project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
     if mask_error:
         project_name+='_mask'
     if os_type == 'Darwin':
