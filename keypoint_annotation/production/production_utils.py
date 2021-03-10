@@ -181,8 +181,62 @@ def normalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_size=
 
     return new_keypoints
 
-def production_predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
-        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'},sigmoid=False, limited=False):
+def to_tck(widths):
+    x = numpy.linspace(0, 1, len(widths))
+    smoothing = 0.0625 * len(widths)
+    return interpolate.fit_nonparametric_spline(x, widths, smoothing=smoothing)
+
+with pkg_resources.resource_stream('elegant', 'width_data/width_trends.pickle') as f:
+    trend_data = pickle.load(f)
+    WIDTH_TRENDS = trend_data
+
+AVG_WIDTHS = numpy.array([numpy.interp(5, WIDTH_TRENDS['ages'], wt) for wt in WIDTH_TRENDS['width_trends']])
+AVG_WIDTHS_TCK = to_tck(AVG_WIDTHS)
+SCALE = [0,1,2,3]
+
+def predict_timepoint_list(timepoint_list, pred_id = 'pred keypoints test', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
+        'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
+        downscale=2, image_shape=(960,512), sigmoid=False):
+    """Convience function to predict all timepoints in a timepoint list
+    """
+    for timepoint in timepoint_list:
+        predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
+
+def predict_experiment(experiment, pred_id = 'pred keypoints test', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
+        'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
+        downscale=2, image_shape=(960,512), sigmoid=False):
+    """Convience function to predict all timepoints in an Experiment instance
+    """
+    for position in experiment.positions.values():
+        for timepoint in position.timepoints.values():
+            print(position.name, timepoint.name)
+            predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
+
+def predict_position(position, pred_id = 'pred keypoints test', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
+        'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
+        downscale=2, image_shape=(960,512), sigmoid=False):
+    """Convience function to predict all timepoints in Position instance
+    """
+    for timepoint in position.timepoints.values():
+        predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
+
+def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
+        'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
+        downscale=2, image_shape=(960,512), sigmoid=False):
+    
+    #get worm-frame image
+    worm_frame_image = production_utils.get_worm_frame_image(timepoint, downscale, image_shape, reflect=False)
+    worm_frame_image = numpy.expand_dims(worm_frame_image, axis=0)
+    extend_img = numpy.concatenate((worm_frame_image, worm_frame_image, worm_frame_image),axis=0)
+    #predict image and renormalize keypoints to the original image size
+    pred_keypoints = predict_image(extend_img, downscale, model_paths, sigmoid)
+    
+    keypoint_dict = renormalize_pred_keypoints(timepoint, pred_keypoints, downscale, image_shape)
+    timepoint.annotations[pred_id] = keypoint_dict
+    return keypoint_dict
+
+def predict_image(image, downscale=2, model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 'vulva_class':'./models/vulva_class_bestValModel.paramOnly',
+        'vulva_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'},sigmoid=False):
     
     keypoint_dict = {}
     #identify dorsal, ventral first
@@ -194,15 +248,11 @@ def production_predict_image(image, keypoints, downscale=2, model_paths= {'ant_p
     _, vulva_out = torch.max(out, 1)
     vulva_out = vulva_out.item()
     #flip vulva if needed
-    """if keypoints['vulva'][1] > 0:
-                    tensor_img = torch.flip(tensor_img, [3])"""
+   if vulva_out > 0:
+        tensor_img = torch.flip(tensor_img, [3])
     #print(tensor_img.size())
-    print("true vulva: ", keypoints['vulva'][1], "    vulva out: ", out, vulva_out)
     kp_list = ['anterior bulb', 'posterior bulb', 'vulva', 'tail']
     model_kp_list = ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']
-    if limited:
-    	kp_list = ['posterior bulb', 'vulva']
-    	model_kp_list = ['post_pharynx', 'vulva_kp']
 
     for kp, model_kp in zip(kp_list, model_kp_list):
         #load model

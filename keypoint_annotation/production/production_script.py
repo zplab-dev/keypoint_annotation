@@ -6,7 +6,6 @@ from elegant import datamodel
 
 from keypoint_annotation.model_metrics import model_metrics_script
 from keypoint_annotation.production import production_utils
-from keypoint_annotation.model_metrics import model_metrics_utils
 
 def run_predictor(experiment, model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, sigmoid=False, dim1D=False):
     device ='cpu'
@@ -35,9 +34,8 @@ def run_predictor(experiment, model_path_root, covariate, max_val, downscale=1, 
                  'vulva_kp':model_path_root+'/vulva_kp/bestValModel.paramOnly', 
                  'tail':model_path_root+'/tail/bestValModel.paramOnly'}
 
-    limited = False
     for timepoint in timepoint_list:
-            model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid, limited)
+            production_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
 
     experiment.write_to_disk() 
 
