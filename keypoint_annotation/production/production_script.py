@@ -67,21 +67,7 @@ if __name__ == "__main__":
     print(os_type)
     covariate = 200
     max_val = 3
-    """try:
-                    covariate, max_val, experiment_root = sys.argv[1], sys.argv[2], sys.argv[3]
-                except IndexError:
-                    print("Please include covariate and max_val")
-                    sys.exit(1)"""
 
-    image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
-    #project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
-    if sigmoid:
-        covariate = 1
-        project_name = '{}x{}_slope{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
-    else:
-        project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
-    if mask_error:
-        project_name+='_mask'
     if os_type == 'Darwin':
         model_path_root = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/'
         #model_path_root = '/Volumes/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_api_960x96_cov100'
@@ -89,7 +75,29 @@ if __name__ == "__main__":
        #model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_api_960x96_cov100'
        model_path_root = '/mnt/lugia_array/Laird_Nicolette/deep_learning/keypoint_detection/new_api/production_dataloader_test/new_kp_maps/'
 
-    model_path_root = model_path_root+project_name
+    image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
+    if sigmoid:
+        model_path_root += 'sigmoid_kp/'
+        covariate = 1
+        project_name = '{}x{}_slope{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+    else:
+        model_path_root += 'gaussian_kp'
+    
+    if dim1D:
+        model_path_root+='1D_gaussian/'
+        project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+    else:
+        model_path_root+='2D_gaussian/'
+        project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+
+    if epochs:
+            project_name = str(epochs)+'_epochs/'+project_name
+    if mask_error:
+        project_name+='_mask'
+
+    
+    root_path= model_path_root+project_name
+
     experiment_root = args.exp_root
     experiment = datamodel.Experiment(experiment_root)
-    run_predictor(experiment, model_path_root, covariate, max_val, downscale, image_shape, mask_error, sigmoid, dim1D)
+    run_predictor(experiment, root_path, covariate, max_val, downscale, image_shape, mask_error, sigmoid, dim1D)
