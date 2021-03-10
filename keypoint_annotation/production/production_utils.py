@@ -84,7 +84,7 @@ def get_worm_frame_image(timepoint, downscale=1, image_size=(960, 512), reflect=
     return worm_frame
 
 def weighted_mean(kp_map):
-	#try a gaussian filter to make output a bit smoother
+    #try a gaussian filter to make output a bit smoother
     out_kp_map = gaussian_filter(kp_map, 1)
     #To ensure there are no negative values, make the pixels that are less than half the maximum zero
     max_pixel = out_kp_map.max()
@@ -96,8 +96,8 @@ def weighted_mean(kp_map):
     return (pred_x, pred_y)
 
 def process_sigmoid(out_kp_map):
-	max_val = out_kp_map.max() #can have a variable value as the max value
-	return max_val - abs(out_kp_map)
+    max_val = out_kp_map.max() #can have a variable value as the max value
+    return max_val - abs(out_kp_map)
 
 def process_output(out, downscale=2, sigmoid=False):
     #Way to get the keypoint maps and make it into the xy positions
@@ -109,7 +109,7 @@ def process_output(out, downscale=2, sigmoid=False):
     #mask = mask>0
     #See if the output is a sigmoid or gaussian output type
     if sigmoid:
-    	out_kp_map = process_sigmoid(out_kp_map)
+        out_kp_map = process_sigmoid(out_kp_map)
     #if not sigmoid, assume the output is a guassian keypoint map, so go through with the weighted mean
     pred_x, pred_y = weighted_mean(out_kp_map)
     return (pred_x, pred_y)
@@ -284,8 +284,8 @@ def output_prediction_image(image, keypoints, model_paths={'ant_pharynx':"./mode
     kp_list = ['anterior bulb', 'posterior bulb', 'vulva', 'tail']
     model_kp_list = ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']
     if limited:
-    	kp_list = ['posterior bulb', 'vulva']
-    	model_kp_list = ['post_pharynx', 'vulva_kp']
+        kp_list = ['posterior bulb', 'vulva']
+        model_kp_list = ['post_pharynx', 'vulva_kp']
 
     for kp, model_kp in zip(kp_list, model_kp_list):
         #load model
