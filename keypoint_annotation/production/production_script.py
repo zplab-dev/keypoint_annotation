@@ -81,7 +81,7 @@ if __name__ == "__main__":
         covariate = 1
         project_name = '{}x{}_slope{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
     else:
-        model_path_root += 'gaussian_kp'
+        model_path_root += 'gaussian_kp/'
     
     if dim1D:
         model_path_root+='1D_gaussian/'
