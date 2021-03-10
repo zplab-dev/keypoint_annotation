@@ -1,6 +1,7 @@
 import itertools
 import platform
 import argparse
+import torch
 from elegant import datamodel
 
 from keypoint_annotation.model_metrics import model_metrics_script
