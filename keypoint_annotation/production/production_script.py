@@ -28,6 +28,13 @@ def run_predictor(experiment, model_path_root, covariate, max_val, downscale=1, 
     if mask_error:
         pred_id+='_mask'
 
+    model_path_root = model_path_root
+    model_paths={'ant_pharynx':model_path_root+"/ant_pharynx/bestValModel.paramOnly", 
+                 'post_pharynx':model_path_root+'/post_pharynx/bestValModel.paramOnly', 
+                 'vulva_class':model_path_root+'/Vulva_Classifier/bestValModel.paramOnly',
+                 'vulva_kp':model_path_root+'/vulva_kp/bestValModel.paramOnly', 
+                 'tail':model_path_root+'/tail/bestValModel.paramOnly'}
+
     limited = False
     for timepoint in timepoint_list:
             model_metrics_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid, limited)
