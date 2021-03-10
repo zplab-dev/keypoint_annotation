@@ -17,7 +17,7 @@ class WormKeypointDataset:
         """Callable class to generate a worm frame image and scaled keypoint maps to be used in training the keypoint CNN.
 
         Parameters:
-            generate_data: function or callable class to generate keypoint maps using a tuple of x,y positions of the keypoints and
+            generate_data: function or callablŽe class to generate keypoint maps using a tuple of x,y positions of the keypoints and
                 the worm-frame image shape. Must have the signature (keypoint_coords, image_shape), where keypoint_coords is a tuple of x and y coords
                 for the keypoints
             downscale: 
