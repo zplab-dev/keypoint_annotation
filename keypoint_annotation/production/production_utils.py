@@ -225,7 +225,7 @@ def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {
         downscale=2, image_shape=(960,512), sigmoid=False):
     
     #get worm-frame image
-    worm_frame_image = production_utils.get_worm_frame_image(timepoint, downscale, image_shape, reflect=False)
+    worm_frame_image = get_worm_frame_image(timepoint, downscale, image_shape, reflect=False)
     worm_frame_image = numpy.expand_dims(worm_frame_image, axis=0)
     extend_img = numpy.concatenate((worm_frame_image, worm_frame_image, worm_frame_image),axis=0)
     #predict image and renormalize keypoints to the original image size
