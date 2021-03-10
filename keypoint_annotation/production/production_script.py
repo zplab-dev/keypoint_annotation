@@ -9,7 +9,7 @@ from keypoint_annotation.model_metrics import model_metrics_utils
 
 def run_predictor(experiment, model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, sigmoid=False, dim1D=False):
 	device ='cpu'
-    if torch.cuda.is_available(): device='cuda:0'
+	if torch.cuda.is_available(): device='cuda:0'
     timepoint_list = datamodel.Timepoints.from_experiments(experiment) 
 
     device ='cpu'
