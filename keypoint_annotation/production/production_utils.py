@@ -263,7 +263,7 @@ def predict_image(image, downscale=2, model_paths= {'ant_pharynx':"./models/ant_
 
         tensor_img = torch.tensor(image).unsqueeze(0)
         out = regModel(tensor_img)
-        pred_kp = process_output(out, downscal, sigmoid)
+        pred_kp = process_output(out, downscale, sigmoid)
         if kp is 'vulva':
             #want to preserve what side the vulva is on.
             if vulva_out <=0:
