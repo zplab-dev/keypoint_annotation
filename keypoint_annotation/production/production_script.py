@@ -1,3 +1,4 @@
+import re
 import itertools
 import platform
 import argparse
