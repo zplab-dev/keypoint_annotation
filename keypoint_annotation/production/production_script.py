@@ -47,8 +47,12 @@ if __name__ == "__main__":
         print(epochs)
 
     sigmoid = False
+    dim1D = False
     if args.sigmoid:
         sigmoid = True
+
+    if args.dim1D:
+        dim1D = True
 
     #model parameters
     downscale = 1
@@ -81,4 +85,4 @@ if __name__ == "__main__":
 
     experiment_root = args.exp_root
     experiment = datamodel.Experiment(experiment_root)
-    run_predictor(experiment, model_path_root, covariate, max_val, downscale, image_shape, mask_error, sigmoid, limited=False)
+    run_predictor(experiment, model_path_root, covariate, max_val, downscale, image_shape, mask_error, sigmoid, dim1D)
