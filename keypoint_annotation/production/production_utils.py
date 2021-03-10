@@ -248,8 +248,8 @@ def predict_image(image, downscale=2, model_paths= {'ant_pharynx':"./models/ant_
     _, vulva_out = torch.max(out, 1)
     vulva_out = vulva_out.item()
     #flip vulva if needed
-   if vulva_out > 0:
-    tensor_img = torch.flip(tensor_img, [3])
+    if vulva_out > 0:
+        tensor_img = torch.flip(tensor_img, [3])
     #print(tensor_img.size())
     kp_list = ['anterior bulb', 'posterior bulb', 'vulva', 'tail']
     model_kp_list = ['ant_pharynx', 'post_pharynx', 'vulva_kp', 'tail']
