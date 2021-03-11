@@ -85,13 +85,12 @@ if __name__ == "__main__":
         project_name = '{}x{}_slope{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
     else:
         model_path_root += 'gaussian_kp/'
-    
-    if dim1D:
-        model_path_root+='1D_gaussian/'
-        project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
-    else:
-        model_path_root+='2D_gaussian/'
-        project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+        if dim1D:
+            model_path_root+='1D_gaussian/'
+            project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+        else:
+            model_path_root+='2D_gaussian/'
+            project_name = '{}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
 
     if epochs:
             project_name = str(epochs)+'_epochs/'+project_name
