@@ -18,6 +18,8 @@ def run_predictor(experiment, model_path_root, covariate, max_val, downscale=1, 
     image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
     if sigmoid:
         pred_id = 'pred keypoints {}x{}_slope{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
+    elif dim1D:
+        pred_id = 'pred keypoints {}x{}_cov{}_max{}_dim1D'.format(image_size[0], image_size[1], covariate, max_val)
     else:
         pred_id = 'pred keypoints {}x{}_cov{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
     
