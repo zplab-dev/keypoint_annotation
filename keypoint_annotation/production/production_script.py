@@ -81,7 +81,7 @@ if __name__ == "__main__":
     image_size = (int(image_shape[0]/downscale), int(image_shape[1]/downscale))
     if sigmoid:
         model_path_root += 'sigmoid_kp/'
-        covariate = 1
+        covariate = 0.5
         project_name = '{}x{}_slope{}_max{}'.format(image_size[0], image_size[1], covariate, max_val)
     else:
         model_path_root += 'gaussian_kp/'

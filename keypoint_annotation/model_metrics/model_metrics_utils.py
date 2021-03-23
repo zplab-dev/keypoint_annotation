@@ -3,7 +3,7 @@ import freeimage
 import numpy
 import pickle
 import torch
-import pathlib
+import pathlib 
 
 from scipy.ndimage import gaussian_filter
 import matplotlib.patches as mpatches
@@ -342,9 +342,11 @@ def plot_violin_plots(data, base_case, save_dir, keys=['cov25','cov50','cov100',
     
 
 def abs_violin(dists, base_case, save_dir, keys=['cov25','cov50','cov100','cov200', 'base case'], kp_list=['anterior bulb', 'posterior bulb', 'vulva', 'tail']):
+    save_dir = pathlib.Path(save_dir)
+    save_dir.mkdir(parents=True, exist_ok=True)
     dists = dists+base_case
-    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20,20))
-    pos = len(dists)
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(15,15))
+    pos = 1
     labels = []
 
     for d_list, legend in zip(dists, keys):
@@ -354,21 +356,30 @@ def abs_violin(dists, base_case, save_dir, keys=['cov25','cov50','cov100','cov20
             ay=i
             if i>1:
                 ay=i-2
-            data=[abs(numpy.array(d_list[kp]))]
-            means = numpy.mean(data[0])
-            if i == 0:
-                label = add_label(axes[ax,ay].violinplot(data, [pos], vert=False, showmeans=True, showextrema=False), legend)
-                labels.append(label)
-            else:
-                axes[ax,ay].violinplot(data, [pos], vert=False, showmeans=True, showextrema=False)
-            axes[ax, ay].text(means, pos, str(numpy.round(means, 3)))
-            axes[ax,ay].set_title(kp)
-        pos-=1
-    plt.legend(*zip(*labels),loc='upper left', bbox_to_anchor=(1.05,1.05), borderaxespad=0)
+            data=[abs(np.array(d_list[kp]))]
+            means = np.mean(data[0])
+            
+            axes[ax,ay].violinplot(data, [pos], vert=False, showmeans=True, showextrema=False)
+            axes[ax, ay].text(means+1, pos, str(np.round(means, 3)))
+            axes[ax,ay].set_title(kp, fontsize=18)
+            axes[ax,ay].axvline(x=np.mean(abs(base_case[0][kp])), linestyle="dashed", linewidth=2)
+            axes[ax,ay].set_ylim(0.25, len(dists)+0.75)
+            axes[ax,ay].set_yticks(np.arange(1, len(dists)+1))
+        
+        axes[0,0].set_xlim([0,15])
+        axes[0,1].set_xlim([0,25])
+        axes[1,0].set_xlim([0,35])
+        axes[1,1].set_xlim([0,35])
+        axes[0,0].set_yticklabels(keys, fontsize=18)
+        axes[1,0].set_yticklabels(keys, fontsize=18)
+        axes[1,0].set_xlabel('Absolute Error (in pixels)', fontsize=18)
+        axes[1,1].set_xlabel('Absolute Error (in pixels)', fontsize=18)
+        pos+=1
+    #plt.legend(*zip(*labels),loc='upper left', bbox_to_anchor=(1.05,1.05), borderaxespad=0)
 
     save_name = save_dir / 'abs_error_violin.png'
     plt.savefig(str(save_name),bbox_inches='tight')
-    #plt.close()
+    plt.close()
 
 def signed_violin(dists, base_case, save_dir, keys=['cov25','cov50','cov100','cov200', 'base case'], kp_list=['anterior bulb', 'posterior bulb', 'vulva', 'tail']):
     dists = dists + base_case
