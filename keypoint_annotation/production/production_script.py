@@ -8,7 +8,7 @@ from elegant import datamodel
 from keypoint_annotation.model_metrics import model_metrics_script
 from keypoint_annotation.production import production_utils
 
-def run_predictor(experiment, model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, sigmoid=False, dim1D=False):
+def run_predictor(experiment, model_path_root, covariate, max_val, downscale=1, image_shape=(960,96), mask_error=False, sigmoid=False, dim1D=False, pose_name='pose'):
     device ='cpu'
     if torch.cuda.is_available(): device='cuda:0'
     timepoint_list = datamodel.Timepoints.from_experiments(experiment) 
@@ -38,7 +38,7 @@ def run_predictor(experiment, model_path_root, covariate, max_val, downscale=1, 
                  'tail':model_path_root+'/tail/bestValModel.paramOnly'}
 
     for timepoint in timepoint_list:
-            production_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid)
+            production_utils.predict_timepoint(timepoint, pred_id, model_paths, downscale, image_shape, sigmoid, pose_name)
 
     experiment.write_to_disk() 
 
@@ -49,6 +49,7 @@ if __name__ == "__main__":
     parser.add_argument('--dim1D', default=False, action='store_true')
     parser.add_argument('--epochs', type=int)
     parser.add_argument('exp_root', action='store', type=str)
+    parser.add_argument('--pose_name', type=str, default='pose')
     args = parser.parse_args()
     epochs = None
     if args.epochs:
@@ -101,5 +102,6 @@ if __name__ == "__main__":
     root_path= model_path_root+project_name
 
     experiment_root = args.exp_root
+    pose_name = args.pose_name
     experiment = datamodel.Experiment(experiment_root)
-    run_predictor(experiment, root_path, covariate, max_val, downscale, image_shape, mask_error, sigmoid, dim1D)
+    run_predictor(experiment, root_path, covariate, max_val, downscale, image_shape, mask_error, sigmoid, dim1D, pose_name)

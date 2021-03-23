@@ -64,10 +64,10 @@ def preprocess_image(timepoint, downscale):
     bf -= 1
     return bf
 
-def get_worm_frame_image(timepoint, downscale=1, image_size=(960, 512), reflect=False):
+def get_worm_frame_image(timepoint, downscale=1, image_size=(960, 512), reflect=False, pose_name='pose'):
     bf = preprocess_image(timepoint, downscale)
     annotations = timepoint.annotations
-    center_tck, width_tck = annotations['pose']
+    center_tck, width_tck = annotations[pose_name]
     image_shape = (image_size[0]/downscale, image_size[1]/downscale)
     #deal with downscaling
     new_center_tck = (center_tck[0], center_tck[1]/downscale, center_tck[2])
@@ -222,10 +222,10 @@ def predict_position(position, pred_id = 'pred keypoints test', model_paths= {'a
 
 def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {'ant_pharynx':"./models/ant_pharynx_bestValModel.paramOnly", 'post_pharynx':'./models/post_pharynx_bestValModel.paramOnly', 
         'vulva_class':'./models/vulva_class_bestValModel.paramOnly','vuvla_kp':'./models/vulva_kp_flip_bestValModel.paramOnly', 'tail':'./models/tail_bestValModel.paramOnly'}, 
-        downscale=2, image_shape=(960,512), sigmoid=False):
+        downscale=2, image_shape=(960,512), sigmoid=False, pose_name='pose'):
     
     #get worm-frame image
-    worm_frame_image = get_worm_frame_image(timepoint, downscale, image_shape, reflect=False)
+    worm_frame_image = get_worm_frame_image(timepoint, downscale, image_shape, reflect=False, pose_name=pose_name)
     worm_frame_image = numpy.expand_dims(worm_frame_image, axis=0)
     extend_img = numpy.concatenate((worm_frame_image, worm_frame_image, worm_frame_image),axis=0)
     #predict image and renormalize keypoints to the original image size
