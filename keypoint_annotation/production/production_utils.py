@@ -129,7 +129,7 @@ def renormalize_pred_keypoints(timepoint, pred_keypoints, downscale=2, image_siz
 
         x_percent = x/image_shape[0]
         new_x = x_percent*length
-        if kp is 'vulva':
+        if kp == 'vulva':
             vulvax = int(new_x)
             print("pred_keypoints: ", x, y)
             print("vulvax: ", vulvax)
@@ -264,7 +264,7 @@ def predict_image(image, downscale=2, model_paths= {'ant_pharynx':"./models/ant_
         tensor_img = torch.tensor(image).unsqueeze(0)
         out = regModel(tensor_img)
         pred_kp = process_output(out, downscale, sigmoid)
-        if kp is 'vulva':
+        if kp == 'vulva':
             #want to preserve what side the vulva is on.
             if vulva_out <=0:
                 x,y = pred_kp

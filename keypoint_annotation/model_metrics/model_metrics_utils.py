@@ -114,7 +114,7 @@ def predict_image(image, keypoints, downscale=2, model_paths= {'ant_pharynx':"./
         
         out = regModel(tensor_img)
         pred_kp = production_utils.process_output(out, downscale, sigmoid)
-        if kp is 'vulva':
+        if kp == 'vulva':
             #want to preserve what side the vulva is on.
             if vulva_out <=0:
                 x,y = pred_kp
@@ -203,7 +203,7 @@ def get_accuracy(experiment, pred_id='pred keypoints test'):
                     print(key)
                     gtx, gty = true_kp[key]
                     px, py = pred_kp[key]
-                    if key is 'vulva':
+                    if key == 'vulva':
                         dist['vulva']+=[gtx - px]
                         dist['vulva class'] = dist['vulva class']+[((gty* py) >= 0)] #test sign
                         print(key)
