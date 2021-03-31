@@ -67,6 +67,10 @@ def preprocess_image(timepoint, downscale):
 def get_worm_frame_image(timepoint, downscale=1, image_size=(960, 512), reflect=False, pose_name='pose'):
     bf = preprocess_image(timepoint, downscale)
     annotations = timepoint.annotations
+    pose = annotations.get(pose_name, None)
+    if pose is None:
+        print("No pose found")
+        return None
     center_tck, width_tck = annotations[pose_name]
     image_shape = (image_size[0]/downscale, image_size[1]/downscale)
     #deal with downscaling
@@ -226,6 +230,8 @@ def predict_timepoint(timepoint, pred_id = 'pred keypoints test', model_paths= {
     
     #get worm-frame image
     worm_frame_image = get_worm_frame_image(timepoint, downscale, image_shape, reflect=False, pose_name=pose_name)
+    if worm_frame_image is None:
+        return None
     worm_frame_image = numpy.expand_dims(worm_frame_image, axis=0)
     extend_img = numpy.concatenate((worm_frame_image, worm_frame_image, worm_frame_image),axis=0)
     #predict image and renormalize keypoints to the original image size

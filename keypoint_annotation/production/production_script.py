@@ -103,5 +103,6 @@ if __name__ == "__main__":
 
     experiment_root = args.exp_root
     pose_name = args.pose_name
+    print(pose_name)
     experiment = datamodel.Experiment(experiment_root)
     run_predictor(experiment, root_path, covariate, max_val, downscale, image_shape, mask_error, sigmoid, dim1D, pose_name)
